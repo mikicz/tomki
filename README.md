@@ -8,3 +8,7 @@ Jediná jistota je tento repositář. Ale s tím zatím nikdo z nás teda extra 
 -----
 
 A asi bychom tohle už neměli editovat.
+
+-----
+
+Ale budeme...
