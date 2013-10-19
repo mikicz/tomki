@@ -36,9 +36,9 @@ class Lexer:
 	OP_MOCNIT = "^" # operátor mocnění, nevím jak se to řekne česky, může to být: ^ a **
 	OP_FLOORDIVISION = "//" # operátor dělení, který ale bude floorovaný (9//2=4)
 	OP_REMAINDER = "%" # operátor zbytku po dělení
-	OP_AND = "AND" # a to: and AND &
-	OP_OR = "OR" # a to: or OR 
-	OP_NOT = "NOT" # a to: not NOT
+	OP_AND = "and" # a to: and AND &
+	OP_OR = "or" # a to: or OR 
+	OP_NOT = "not" # a to: not NOT
 	OP_NOTEQUAL = "<>"
 	OP_BIGGER = ">"
 	OP_SMALLER = "<"
@@ -53,6 +53,7 @@ class Lexer:
 		self._tokens = [] # seznam tokenu, ktere jsme uz naparsovali
 		self._keywords = {} # seznam klicovych slov. Ulozena jsou jako [klicove slovo] = typ tokenu odpovidajici
 		self.soucasnyradek = 1 # počítadlo současného řádku do chybového hlášení
+		self.skonciuzkurva = 0 # nějak to nechtělo skončit, tak jsem to udělal takhle
 
 		#klíčová slova
 		self._keywords["if"] = Lexer.KW_IF 
@@ -64,6 +65,25 @@ class Lexer:
 		self._keywords["continue"] = Lexer.KW_CONTINUE
 		self._keywords["return"] = Lexer.KW_RETURN
 		self._keywords["function"] = Lexer.KW_FUNCTION
+
+		self._keywords["and"] = Lexer.OP_AND
+		self._keywords["or"] = Lexer.OP_OR
+		self._keywords["not"] = Lexer.OP_NOT
+
+		self._keywords["IF"] = Lexer.KW_IF 
+		self._keywords["ELSE"] = Lexer.KW_ELSE
+		self._keywords["ELIF"] = Lexer.KW_ELIF
+		self._keywords["WHILE"] = Lexer.KW_WHILE
+		self._keywords["FOR"] = Lexer.KW_FOR
+		self._keywords["BREAK"] = Lexer.KW_BREAK
+		self._keywords["CONTINUE"] = Lexer.KW_CONTINUE
+		self._keywords["RETURN"] = Lexer.KW_RETURN
+		self._keywords["FUNCTION"] = Lexer.KW_FUNCTION
+
+		self._keywords["AND"] = Lexer.OP_AND
+		self._keywords["OR"] = Lexer.OP_OR
+		self._keywords["NOT"] = Lexer.OP_NOT
+
 
 		self._top = 0 # ukazatel na token ktery vrati funkce topToken() vysvetlime si pozdeji
 		self._string = "" # aktualne zpracovavany retezec
@@ -164,13 +184,15 @@ class Lexer:
 		""" Rozkouskuje dany retezec na tokeny. Nastavi aktualne zpracovavany retezec na ten co funkci posleme, vynuluje aktualni pozici a vola funkci pro naparsovani tokenu dokuc neni cely retezec analyzovan. """
 		self._string = string + "\0" # na konec retezce pridame znak s kodem 0 (to neni 0 jako cifra, ale neviditelny znak). Ten se nesmi v retezci vyskytovat a my s nim jednoduse poznavame, ze jsme na konci. 
 		self._pos = 0
-		while (self._pos < len(self._string)):
+		while (self._pos < len(self._string) and self.skonciuzkurva==0):
 			self.parseToken()
+
 
 	def parseToken(self):
 		""" Naparsuje jeden token ze vstupniho retezce. Preskoci whitespace a pak se rozhodne jestli se jedna o cislo, identifikator, klicove slovo, operator, atd. a overi ze je vse v poradku. Token prida do seznamu naparsovanych tokenu. """
 		self.skipWhitespace()
 		c = self.topChar()
+		print c
 		if (self.isLetter(c)):
 			self.parseIdentifierOrKeyword()
 
@@ -214,11 +236,11 @@ class Lexer:
 
 		elif (c == "^"):
 			self.popChar()
-			self.addToken(LEXER.OP_MOCNIT)
+			self.addToken(Lexer.OP_MOCNIT)
 
 		elif (c == "%"):
 			self.popChar()
-			self.addToken(LEXER.OP_REMAINDER)
+			self.addToken(Lexer.OP_REMAINDER)
 
 		elif (c == ">"):
 			self.popChar()
@@ -240,7 +262,7 @@ class Lexer:
 
 
 		elif (c == '\0'):
-			pass
+			self.skonciuzkurva = 1
 
 		else:
 			self.error("Neznamy znak na vstupu!")
@@ -248,6 +270,6 @@ class Lexer:
 
 # Tohle je ukazka pouziti a testovani
 l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
-l.analyzeString("4 if huhu 23 + == 3 ") # timhle mu reknete, aby naparsoval string, ktery jste napsali
+l.analyzeString("4 if huhu 23 + == 3 ** / + > > >= = asdklf % ^ // and") # timhle mu reknete, aby naparsoval string, ktery jste napsali
 while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
 	print(l.popToken())
