@@ -1,17 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
-def isLetter(a):
-	""" Funkce ktera zjisti, jestli dany znak je pismeno. Pismeno je bud male, nebo velke pismeno. """
-	return ((a>='a') and (a<='z')) or ((a>='A') and (a<='Z'))
-
-def isDigit(a):
-	""" Funkce, ktera zjisti, jestli dany znak je cislice desitkove soustavy. """
-	return (a>='0') and (a<='9')
-
-def isWhitespace(a):
-	""" Funkce, ktera zjisti, jestli dany znak je whitespace. Momentalne je whitespace mezera, tab a nebo novy radek. Opacna lomitka jsou ridici znaky, kterymi muzeme zapisovat specialni znaky, ktere nejsou na klavesnici. Takze \n je konec radky, a ne opacne lomitko a male n. To by se napsalo jako \\n."""
-	return (a in (' ','\t', '\n'))
+	
 
 class Lexer:
 	""" Lexikalni analyzator.
@@ -28,7 +18,7 @@ class Lexer:
 	#keywords
 	KW_IF = "if" # klicove slovo if 
 	KW_ELSE = "else" # klicove slovo else
-	KW_ELSEIF = "elseif"
+	KW_ELIF = "elif"
 	KW_WHILE = "while"
 	KW_FOR = "for"
 	KW_BREAK = "break"
@@ -56,16 +46,18 @@ class Lexer:
 	OP_SMALLERORERUAL = "<="
 
 
+	
 
 	def __init__(self):
 		""" Inicializuje lexikalni analyzator. Zalozi pole tokenu, zalozi seznam klicovych slov, atd. """
 		self._tokens = [] # seznam tokenu, ktere jsme uz naparsovali
 		self._keywords = {} # seznam klicovych slov. Ulozena jsou jako [klicove slovo] = typ tokenu odpovidajici
+		self.soucasnyradek = 1 # počítadlo současného řádku do chybového hlášení
 
 		#klíčová slova
 		self._keywords["if"] = Lexer.KW_IF 
 		self._keywords["else"] = Lexer.KW_ELSE
-		self._keywords["elseif"] = Lexer.KW_ELSEIF
+		self._keywords["elif"] = Lexer.KW_ELIF
 		self._keywords["while"] = Lexer.KW_WHILE
 		self._keywords["for"] = Lexer.KW_FOR
 		self._keywords["break"] = Lexer.KW_BREAK
@@ -76,6 +68,21 @@ class Lexer:
 		self._top = 0 # ukazatel na token ktery vrati funkce topToken() vysvetlime si pozdeji
 		self._string = "" # aktualne zpracovavany retezec
 		self._pos = 0 # pozice v aktualne zpracovavanem retezci
+
+	def isLetter(self, a):
+		""" Funkce ktera zjisti, jestli dany znak je pismeno. Pismeno je bud male, nebo velke pismeno. """
+		return ((a>='a') and (a<='z')) or ((a>='A') and (a<='Z'))
+
+	def isDigit(self, a):
+		""" Funkce, ktera zjisti, jestli dany znak je cislice desitkove soustavy. """
+		return (a>='0') and (a<='9')
+
+	def isWhitespace(self, a):
+		""" Funkce, ktera zjisti, jestli dany znak je whitespace. Momentalne je whitespace mezera, tab a nebo novy radek. Opacna lomitka jsou ridici znaky, kterymi muzeme zapisovat specialni znaky, ktere nejsou na klavesnici. Takze \n je konec radky, a ne opacne lomitko a male n. To by se napsalo jako \\n."""
+		#if (a == "\n"):
+		#	self.soucasnyradek+=1
+		return (a in (' ','\t', '\n'))
+
 
 	def topToken(self):
 		""" Vrati aktualni token. Vysvetlime si priste. """
@@ -106,7 +113,7 @@ class Lexer:
 
 	def error(self, reason):
 		""" Funkce pro prehlednost, vypise ze doslo k chybe, k jake chybe doslo, a skonci program. """
-		print("Pri analyze doslo k chybe: ", reason)
+		print("Při analýze došlo na řádku"+self.soucasnyradek+" k chybě z důvodu: ", reason)
 		sys.exit(1)
 
 	def addToken(self, tokenType, tokenValue = None):
@@ -115,25 +122,36 @@ class Lexer:
 
 	def skipWhitespace(self):
 		""" Preskoci whitespace v aktualne zpracovavanem retezci. """
-		while (isWhitespace(self.topChar())):
+		while (self.isWhitespace(self.topChar())):
 			self.popChar()
 
 	def parseNumber(self):
 		""" Naparsuje cele cislo a jeho hodnotu. """
 		value = 0
-		if (not isDigit(self.topChar())):
+		if (not self.isDigit(self.topChar())):
 			self.error("Zacatek cisla musi byt cislo")
-		while (isDigit(self.topChar())):
+		while (self.isDigit(self.topChar())):
 			value = value * 10 + (ord(self.topChar()) - ord('0'))
 			self.popChar()
 		self.addToken(Lexer.NUMBER, value)
+
+	def parseBinaryNumber(self):
+		""" Naparsuje binární číslo a jeho hodnotu. """
+		value = 0
+		if (not self.isDigit(self.topChar())):
+			self.error("Začátek čísla musí být číslo")
+		while (self.isDigit(self.topChar())):
+			value = value * 2 + (ord(self.topChar()) - ord('0'))
+			self.popChar()
+		self.addToken(Lexer.NUMBER, value)
+
 	
 	def parseIdentifierOrKeyword(self):
 		""" Naparsuje identifikator nebo klicove slovo. Identifikator ma typ IDENT a svuj nazev jako hodnotu. Klicove slovo hodnotu nema, a typ ma podle toho, co je zac. Klicove slovo je takovy identifikator, ktery je ve slovniku klicovych slov, ktery jste inicializovali v metode __init__ nahore. """
 		i = self._pos
-		if (not isLetter(self.topChar())):
+		if (not self.isLetter(self.topChar())):
 			self.error("Identifikator musi zacinat pismenem")
-		while (isLetter(self.topChar())):
+		while (self.isLetter(self.topChar())):
 			self.popChar()
 		value = self._string[i : self._pos]
 		if (value in self._keywords):
@@ -153,13 +171,16 @@ class Lexer:
 		""" Naparsuje jeden token ze vstupniho retezce. Preskoci whitespace a pak se rozhodne jestli se jedna o cislo, identifikator, klicove slovo, operator, atd. a overi ze je vse v poradku. Token prida do seznamu naparsovanych tokenu. """
 		self.skipWhitespace()
 		c = self.topChar()
-		if (isLetter(c)):
+		if (self.isLetter(c)):
 			self.parseIdentifierOrKeyword()
-		elif (isDigit(c)):
+
+		elif (self.isDigit(c)):
 			self.parseNumber()
+
 		elif (c == '+'):
 			self.popChar()
 			self.addToken(Lexer.OP_ADD)
+
 		elif (c == '='):
 			self.popChar()
 			c = self.topChar()
@@ -168,8 +189,59 @@ class Lexer:
 				self.addToken(Lexer.OP_EQ)
 			else:
 				self.addToken(Lexer.OP_ASSIGN)
+
+		elif (c == '-'):
+			self.popChar()
+			self.addToken(Lexer.OP_SUBSTRACT)
+
+		elif (c == '*'):
+			self.popChar()
+			c = self.topChar()
+			if (c == '*'):
+				self.popChar()
+				self.addToken(Lexer.OP_MOCNIT)
+			else:
+				self.addToken(Lexer.OP_MULTIPLY)
+
+		elif (c == "/"):
+			self.popChar()
+			c = self.topChar()
+			if (c == '/'):
+				self.popChar()
+				self.addToken(Lexer.OP_FLOORDIVISION)
+			else:
+				self.addToken(Lexer.OP_DIVIDE)
+
+		elif (c == "^"):
+			self.popChar()
+			self.addToken(LEXER.OP_MOCNIT)
+
+		elif (c == "%"):
+			self.popChar()
+			self.addToken(LEXER.OP_REMAINDER)
+
+		elif (c == ">"):
+			self.popChar()
+			c = self.topChar()
+			if (c == '='):
+				self.popChar()
+				self.addToken(Lexer.OP_BIGGEROREQUAL)
+			else:
+				self.addToken(Lexer.OP_BIGGER)
+
+		elif (c == "<"):
+			self.popChar()
+			c = self.topChar()
+			if (c == '='):
+				self.popChar()
+				self.addToken(Lexer.OP_SMALLEROREQUAL)
+			else:
+				self.addToken(Lexer.OP_SMALLER)
+
+
 		elif (c == '\0'):
 			pass
+
 		else:
 			self.error("Neznamy znak na vstupu!")
 
