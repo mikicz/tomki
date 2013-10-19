@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
 
-	
 
 class Lexer:
 	""" Lexikalni analyzator.
@@ -99,9 +98,17 @@ class Lexer:
 
 	def isWhitespace(self, a):
 		""" Funkce, ktera zjisti, jestli dany znak je whitespace. Momentalne je whitespace mezera, tab a nebo novy radek. Opacna lomitka jsou ridici znaky, kterymi muzeme zapisovat specialni znaky, ktere nejsou na klavesnici. Takze \n je konec radky, a ne opacne lomitko a male n. To by se napsalo jako \\n."""
-		#if (a == "\n"):
-		#	self.soucasnyradek+=1
+		if (a == "\n"):
+			self.soucasnyradek+=1
 		return (a in (' ','\t', '\n'))
+
+	def isBinary(self, a):
+		""" Funkce, která zjisti, jestli je daný znak číslice binární soustavy. """
+		return ((a=="0") or (a=="1"))
+
+	def isHexadecimal(self, a):
+		""" Funkce, která zjisti, jestli je daný znak číslice hexidecimální soustavy. """
+		return ((a>='0') and (a<='9')) or ((a>="A") and (a<="F"))
 
 
 	def topToken(self):
@@ -133,7 +140,7 @@ class Lexer:
 
 	def error(self, reason):
 		""" Funkce pro prehlednost, vypise ze doslo k chybe, k jake chybe doslo, a skonci program. """
-		print("Při analýze došlo na řádku"+self.soucasnyradek+" k chybě z důvodu: ", reason)
+		print("Pri analyze doslo na radku "+str(self.soucasnyradek)+" k chybe z duvodu: ", reason)
 		sys.exit(1)
 
 	def addToken(self, tokenType, tokenValue = None):
@@ -146,22 +153,64 @@ class Lexer:
 			self.popChar()
 
 	def parseNumber(self):
-		""" Naparsuje cele cislo a jeho hodnotu. """
+		""" Naparsuje cislo v desitkove soustave a jeho hodnotu. """
 		value = 0
 		if (not self.isDigit(self.topChar())):
 			self.error("Zacatek cisla musi byt cislo")
 		while (self.isDigit(self.topChar())):
 			value = value * 10 + (ord(self.topChar()) - ord('0'))
 			self.popChar()
+
+		if (self.topChar()=="."):
+			self.popChar()
+			if (not self.isDigit(self.topChar())):
+				self.error("Po desetine tecce musi byt aspon jedno cislo")
+			value = float(value)
+			x=10.0
+			value = value + (ord(self.topChar()) - ord('0'))/x
+			self.popChar()
+			while (self.isDigit(self.topChar())):
+				x = x * 10
+				value = value + (ord(self.topChar()) - ord('0'))/x
+				self.popChar()
+
 		self.addToken(Lexer.NUMBER, value)
 
 	def parseBinaryNumber(self):
 		""" Naparsuje binární číslo a jeho hodnotu. """
 		value = 0
-		if (not self.isDigit(self.topChar())):
-			self.error("Začátek čísla musí být číslo")
+		if (not self.isBinary(self.topChar())):
+			self.error("Zacatek cisla musi byt binarni cislo")
 		while (self.isDigit(self.topChar())):
 			value = value * 2 + (ord(self.topChar()) - ord('0'))
+			self.popChar()
+		self.addToken(Lexer.NUMBER, value)
+
+	def parseHexadecimalNumber(self):
+		""" Naparsuje hexadecimální číslo a jeho hodnotu. """
+		value = 0
+		if (not self.isHexadecimal(self.topChar())):
+			self.error("Zacatek cisla musi byt hexadecimalni cislo")
+		while (self.isDigit(self.topChar())):
+
+			x=self.topChar()
+			if ((x>='0') and (x<='9')):
+				y=ord(x)-ord('0')
+			else:
+				if (x=="A"):
+					y=10
+				elif (x=="B"):
+					y=11
+				elif (x=="C"):
+					y=12
+				elif (x=="D"):
+					y=13
+				elif (x=="E"):
+					y=14
+				elif (X=="F"):
+					y=15
+				
+			value = value * 16 + y
 			self.popChar()
 		self.addToken(Lexer.NUMBER, value)
 
@@ -238,6 +287,18 @@ class Lexer:
 			self.popChar()
 			self.addToken(Lexer.OP_MOCNIT)
 
+		elif (c == "&"):
+			self.popChar()
+			self.addToken(Lexer.OP_AND)
+
+		elif (c == "||"):
+			self.popChar()
+			self.addToken(Lexer.OP_OR)
+
+		elif (c == "!"):
+			self.popChar()
+			self.addToken(Lexer.OP_NOT)
+
 		elif (c == "%"):
 			self.popChar()
 			self.addToken(Lexer.OP_REMAINDER)
@@ -257,12 +318,22 @@ class Lexer:
 			if (c == '='):
 				self.popChar()
 				self.addToken(Lexer.OP_SMALLEROREQUAL)
+			elif (c == ">"):
+				self.popChar
+				self.addToken(Lexer.OP_NOTEQUAL)
 			else:
 				self.addToken(Lexer.OP_SMALLER)
 
+		elif (c == "$"):
+			self.popChar()
+			self.parseBinaryNumber()
+
+		elif (c == "€"):
+			self.popChar()
+			self.parseHexadecimalNumber()
 
 		elif (c == '\0'):
-			self.skonciuzkurva = 1
+			self.skonciuzkurva = 1 # aby to už kurva skončilo, nějak nefungovalo to počítadlo pozice a nechtělo se mi to říkat
 
 		else:
 			self.error("Neznamy znak na vstupu!")
@@ -270,6 +341,6 @@ class Lexer:
 
 # Tohle je ukazka pouziti a testovani
 l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
-l.analyzeString("4 if huhu 23 + == 3 ** / + > > >= = asdklf % ^ // and") # timhle mu reknete, aby naparsoval string, ktery jste napsali
+l.analyzeString("10465.1546654") # timhle mu reknete, aby naparsoval string, ktery jste napsali
 while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
 	print(l.popToken())
