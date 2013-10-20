@@ -88,6 +88,8 @@ class Lexer:
 		self._string = "" # aktualne zpracovavany retezec
 		self._pos = 0 # pozice v aktualne zpracovavanem retezci
 
+
+# Funkce na šťování znaků
 	def isLetter(self, a):
 		""" Funkce ktera zjisti, jestli dany znak je pismeno. Pismeno je bud male, nebo velke pismeno. """
 		return ((a>='a') and (a<='z')) or ((a>='A') and (a<='Z'))
@@ -97,7 +99,10 @@ class Lexer:
 		return (a>='0') and (a<='9')
 
 	def isWhitespace(self, a):
-		""" Funkce, ktera zjisti, jestli dany znak je whitespace. Momentalne je whitespace mezera, tab a nebo novy radek. Opacna lomitka jsou ridici znaky, kterymi muzeme zapisovat specialni znaky, ktere nejsou na klavesnici. Takze \n je konec radky, a ne opacne lomitko a male n. To by se napsalo jako \\n."""
+		""" Funkce, ktera zjisti, jestli dany znak je whitespace. Momentalne je
+		whitespace mezera, tab a nebo novy radek. Opacna lomitka jsou ridici znaky,
+		kterymi muzeme zapisovat specialni znaky, ktere nejsou na klavesnici.
+		Takze \n je konec radky, a ne opacne lomitko a male n. To by se napsalo jako \\n."""
 		if (a == "\n"):
 			self.soucasnyradek+=1
 		return (a in (' ','\t', '\n'))
@@ -108,8 +113,7 @@ class Lexer:
 
 	def isHexadecimal(self, a):
 		""" Funkce, která zjisti, jestli je daný znak číslice hexidecimální soustavy. """
-		return ((a>='0') and (a<='9')) or ((a>="A") and (a<="F"))
-
+		return ((a>='0') and (a<='9')) or ((a>="A") and (a<="F")) or ((a>="f") and (a<="a"))
 
 	def topToken(self):
 		""" Vrati aktualni token. Vysvetlime si priste. """
@@ -130,11 +134,13 @@ class Lexer:
 		return self._top >= len(self._tokens)
 
 	def topChar(self):
-		""" Vrati aktualne zpracovavany znak. Tohle je funkce jen proto, abychom nemuseli porad psat ten slozity pristup. """
+		""" Vrati aktualne zpracovavany znak. Tohle je funkce jen proto, abychom
+		nemuseli porad psat ten slozity pristup. """
 		return self._string[self._pos]
 
 	def popChar(self):
-		""" Posune nas na dalsi znak v aktualne analyzovanem retezci, pokud takovy existuje. Zase funkce pro prehlednost, abychom nemuseli mit to kontrolovani mezi vsude. """
+		""" Posune nas na dalsi znak v aktualne analyzovanem retezci, pokud takovy
+		existuje. Zase funkce pro prehlednost, abychom nemuseli mit to kontrolovani mezi vsude. """
 		if (self._pos < len(self._string)):
 			self._pos += 1
 
@@ -144,7 +150,8 @@ class Lexer:
 		sys.exit(1)
 
 	def addToken(self, tokenType, tokenValue = None):
-		""" Funkce, ktera prida dany druh tokenu a pripadne i hodnotu na seznam jiz naparsovanych tokenu. Kdyz naparsujete nejaky token, musite zavolat tuhle funkci. """
+		""" Funkce, ktera prida dany druh tokenu a pripadne i hodnotu na seznam
+		jiz naparsovanych tokenu. Kdyz naparsujete nejaky token, musite zavolat tuhle funkci. """
 		self._tokens.append((tokenType, tokenValue))
 
 	def skipWhitespace(self):
@@ -152,6 +159,7 @@ class Lexer:
 		while (self.isWhitespace(self.topChar())):
 			self.popChar()
 
+# funkce na parsování tokenů
 	def parseNumber(self):
 		""" Naparsuje cislo v desitkove soustave a jeho hodnotu. """
 		value = 0
@@ -197,18 +205,20 @@ class Lexer:
 			if ((x>='0') and (x<='9')):
 				y=ord(x)-ord('0')
 			else:
-				if (x=="A"):
+				if (x=="A") or (x=="a"):
 					y=10
-				elif (x=="B"):
+				elif (x=="B") or (x=="b"):
 					y=11
-				elif (x=="C"):
+				elif (x=="C") or (x=="c"):
 					y=12
-				elif (x=="D"):
+				elif (x=="D") or (x=="d"):
 					y=13
-				elif (x=="E"):
+				elif (x=="E") or (x=="e"):
 					y=14
-				elif (X=="F"):
+				elif (X=="F") or (x=="f"):
 					y=15
+				else:
+					self.error("Hexadecimalni cislo s nehexadecimalnimi znaky")
 				
 			value = value * 16 + y
 			self.popChar()
@@ -216,7 +226,10 @@ class Lexer:
 
 	
 	def parseIdentifierOrKeyword(self):
-		""" Naparsuje identifikator nebo klicove slovo. Identifikator ma typ IDENT a svuj nazev jako hodnotu. Klicove slovo hodnotu nema, a typ ma podle toho, co je zac. Klicove slovo je takovy identifikator, ktery je ve slovniku klicovych slov, ktery jste inicializovali v metode __init__ nahore. """
+		""" Naparsuje identifikator nebo klicove slovo. Identifikator ma typ IDENT
+		a svuj nazev jako hodnotu. Klicove slovo hodnotu nema, a typ ma podle toho,
+		co je zac. Klicove slovo je takovy identifikator, ktery je ve slovniku
+		klicovych slov, ktery jste inicializovali v metode __init__ nahore. """
 		i = self._pos
 		if (not self.isLetter(self.topChar())):
 			self.error("Identifikator musi zacinat pismenem")
@@ -230,15 +243,22 @@ class Lexer:
 
 	
 	def analyzeString(self, string):
-		""" Rozkouskuje dany retezec na tokeny. Nastavi aktualne zpracovavany retezec na ten co funkci posleme, vynuluje aktualni pozici a vola funkci pro naparsovani tokenu dokuc neni cely retezec analyzovan. """
-		self._string = string + "\0" # na konec retezce pridame znak s kodem 0 (to neni 0 jako cifra, ale neviditelny znak). Ten se nesmi v retezci vyskytovat a my s nim jednoduse poznavame, ze jsme na konci. 
+		""" Rozkouskuje dany retezec na tokeny. Nastavi aktualne zpracovavany
+		retezec na ten co funkci posleme, vynuluje aktualni pozici a vola funkci
+		pro naparsovani tokenu dokuc neni cely retezec analyzovan. """
+		self._string = string + "\0" # na konec retezce pridame znak s kodem 0
+									 # (to neni 0 jako cifra, ale neviditelny znak).
+									 # Ten se nesmi v retezci vyskytovat a my s
+									 # nim jednoduse poznavame, ze jsme na konci. 
 		self._pos = 0
 		while (self._pos < len(self._string) and self.skonciuzkurva==0):
 			self.parseToken()
 
 
 	def parseToken(self):
-		""" Naparsuje jeden token ze vstupniho retezce. Preskoci whitespace a pak se rozhodne jestli se jedna o cislo, identifikator, klicove slovo, operator, atd. a overi ze je vse v poradku. Token prida do seznamu naparsovanych tokenu. """
+		""" Naparsuje jeden token ze vstupniho retezce. Preskoci whitespace a pak
+		se rozhodne jestli se jedna o cislo, identifikator, klicove slovo, operator,
+		atd. a overi ze je vse v poradku. Token prida do seznamu naparsovanych tokenu. """
 		self.skipWhitespace()
 		c = self.topChar()
 		print c
