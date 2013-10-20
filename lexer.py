@@ -348,7 +348,7 @@ class Lexer:
 			self.popChar()
 			self.parseBinaryNumber()
 
-		elif (c == "€"):
+		elif (c == "\€"):
 			self.popChar()
 			self.parseHexadecimalNumber()
 
@@ -356,11 +356,11 @@ class Lexer:
 			self.skonciuzkurva = 1 # aby to už kurva skončilo, nějak nefungovalo to počítadlo pozice a nechtělo se mi to říkat
 
 		else:
-			self.error("Neznamy znak na vstupu!")
+			self.error("Neznamy znak na vstupu! Znak: "+c)
 
 
 # Tohle je ukazka pouziti a testovani
 l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
-l.analyzeString("10465.1546654") # timhle mu reknete, aby naparsoval string, ktery jste napsali
+l.analyzeString("€A") # timhle mu reknete, aby naparsoval string, ktery jste napsali
 while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
 	print(l.popToken())
