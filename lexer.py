@@ -5,7 +5,11 @@ import sys
 class Lexer:
 	""" Lexikalni analyzator.
     
-	Objekt, ktery se stara o lexikalni analyzu. Obsahuje v sobe vsechny druhy tokenu, a metody, ktere do tokenu umi prevest libovolny retezec. Kdyz se retezec prevede, tokeny se pridaji do seznamu tokenu. Kazdy token je tuple (typ tokenu, hodnota tokenu). Metody topToken() a popToken() slouzi k zobrazeni a posunuti se na dalsi token. Ty budeme pouzivat dale. 
+	Objekt, ktery se stara o lexikalni analyzu. Obsahuje v sobe vsechny druhy tokenu,
+	a metody, ktere do tokenu umi prevest libovolny retezec. Kdyz se retezec prevede,
+	tokeny se pridaji do seznamu tokenu. Kazdy token je tuple (typ tokenu, hodnota
+	tokenu). Metody topToken() a popToken() slouzi k zobrazeni a posunuti se na
+	dalsi token. Ty budeme pouzivat dale. 
     """
 
 	EOF = "<EOF>" # typ token pro konec souboru, End Of File, oznacuje, ze uz neni zadny dalsi token za nim
@@ -99,10 +103,12 @@ class Lexer:
 		return (a>='0') and (a<='9')
 
 	def isWhitespace(self, a):
-		""" Funkce, ktera zjisti, jestli dany znak je whitespace. Momentalne je
+		"""
+		Funkce, ktera zjisti, jestli dany znak je whitespace. Momentalne je
 		whitespace mezera, tab a nebo novy radek. Opacna lomitka jsou ridici znaky,
 		kterymi muzeme zapisovat specialni znaky, ktere nejsou na klavesnici.
-		Takze \n je konec radky, a ne opacne lomitko a male n. To by se napsalo jako \\n."""
+		Takze \n je konec radky, a ne opacne lomitko a male n. To by se napsalo jako \\n.
+		"""
 		if (a == "\n"):
 			self.soucasnyradek+=1
 		return (a in (' ','\t', '\n'))
@@ -113,7 +119,7 @@ class Lexer:
 
 	def isHexadecimal(self, a):
 		""" Funkce, která zjisti, jestli je daný znak číslice hexidecimální soustavy. """
-		return ((a>='0') and (a<='9')) or ((a>="A") and (a<="F")) or ((a>="f") and (a<="a"))
+		return ((a>='0') and (a<='9')) or ((a>="A") and (a<="F")) or ((a>="a") and (a<="f"))
 
 	def topToken(self):
 		""" Vrati aktualni token. Vysvetlime si priste. """
@@ -140,8 +146,11 @@ class Lexer:
 		return self._string[self._pos]
 
 	def popChar(self):
-		""" Posune nas na dalsi znak v aktualne analyzovanem retezci, pokud takovy
-		existuje. Zase funkce pro prehlednost, abychom nemuseli mit to kontrolovani mezi vsude. """
+		"""
+		Posune nas na dalsi znak v aktualne analyzovanem retezci, pokud takovy
+		existuje. Zase funkce pro prehlednost, abychom nemuseli mit to kontrolovani
+		mezi vsude.
+		"""
 		if (self._pos < len(self._string)):
 			self._pos += 1
 
@@ -151,8 +160,11 @@ class Lexer:
 		sys.exit(1)
 
 	def addToken(self, tokenType, tokenValue = None):
-		""" Funkce, ktera prida dany druh tokenu a pripadne i hodnotu na seznam
-		jiz naparsovanych tokenu. Kdyz naparsujete nejaky token, musite zavolat tuhle funkci. """
+		"""
+		Funkce, ktera prida dany druh tokenu a pripadne i hodnotu na seznam jiz
+		naparsovanych tokenu. Kdyz naparsujete nejaky token, musite zavolat tuhle
+		funkci.
+		"""
 		self._tokens.append((tokenType, tokenValue))
 
 	def skipWhitespace(self):
@@ -227,14 +239,16 @@ class Lexer:
 
 	
 	def parseIdentifierOrKeyword(self):
-		""" Naparsuje identifikator nebo klicove slovo. Identifikator ma typ IDENT
+		"""
+		Naparsuje identifikator nebo klicove slovo. Identifikator ma typ IDENT
 		a svuj nazev jako hodnotu. Klicove slovo hodnotu nema, a typ ma podle toho,
 		co je zac. Klicove slovo je takovy identifikator, ktery je ve slovniku
-		klicovych slov, ktery jste inicializovali v metode __init__ nahore. """
+		klicovych slov, ktery jste inicializovali v metode __init__ nahore.
+		"""
 		i = self._pos
 		if (not self.isLetter(self.topChar())):
 			self.error("Identifikator musi zacinat pismenem")
-		while (self.isLetter(self.topChar())):
+		while (self.isLetter(self.topChar()) or self.isDigit(self.topChar())):
 			self.popChar()
 		value = self._string[i : self._pos]
 		if (value in self._keywords):
@@ -368,6 +382,6 @@ class Lexer:
 
 # Tohle je ukazka pouziti a testovani
 l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
-l.analyzeString("$h3A") # timhle mu reknete, aby naparsoval string, ktery jste napsali
+l.analyzeString("test2") # timhle mu reknete, aby naparsoval string, ktery jste napsali
 while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
 	print(l.popToken())
