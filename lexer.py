@@ -47,6 +47,14 @@ class Lexer:
 	OP_SMALLER = "<"
 	OP_BIGGEROREQUAL = ">="
 	OP_SMALLERORERUAL = "<="
+	OP_PARENTHESES_LEFT = "("
+	OP_PARENTHESES_RIGHT = ")"
+	OP_BRACES_LEFT = "{"
+	OP_BRACES_RIGHT = "}"
+	OP_BRACKETS_LEFT = "["
+	OP_BRACKETS_RIGHT = "]"
+	OP_COMMA = ","
+	OP_SEMICOLON = ";"
 
 
 	
@@ -228,7 +236,7 @@ class Lexer:
 					y=13
 				elif (x=="E") or (x=="e"):
 					y=14
-				elif (X=="F") or (x=="f"):
+				elif (x=="F") or (x=="f"):
 					y=15
 				else:
 					self.error("Hexadecimalni cislo s nehexadecimalnimi znaky")
@@ -283,6 +291,7 @@ class Lexer:
 		elif (self.isDigit(c)):
 			self.parseNumber()
 
+#Operátory
 		elif (c == '+'):
 			self.popChar()
 			self.addToken(Lexer.OP_ADD)
@@ -359,6 +368,34 @@ class Lexer:
 			else:
 				self.addToken(Lexer.OP_SMALLER)
 
+# Závorky
+		elif (c == "("):
+			self.popChar()
+			self.addToken(Lexer.OP_PARENTHESES_LEFT)
+		elif (c == ")"):
+			self.popChar()
+			self.addToken(Lexer.OP_PARENTHESES_RIGHT)
+		elif (c == "{"):
+			self.popChar()
+			self.addToken(Lexer.OP_BRACES_LEFT)
+		elif (c == "}"):
+			self.popChar()
+			self.addToken(Lexer.OP_BRACES_RIGHT)
+		elif (c == "["):
+			self.popChar()
+			self.addToken(Lexer.OP_BRACKETS_RIGHT)
+		elif (c == "]"):
+			self.popChar()
+			self.addToken(Lexer.OP_BRACKETS_LEFT)
+
+		elif (c == ","):
+			self.popChar()
+			self.addToken(Lexer.OP_COMMA)
+		elif (c == ";"):
+			self.popChar()
+			self.addToken(Lexer.OP_SEMICOLON)
+
+# Typy čísel
 		elif (c == "$"):
 			self.popChar()
 			if self.topChar() == "b":
@@ -382,6 +419,6 @@ class Lexer:
 
 # Tohle je ukazka pouziti a testovani
 l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
-l.analyzeString("test2") # timhle mu reknete, aby naparsoval string, ktery jste napsali
+l.analyzeString("for(i,i++,i<10){try $b101001 + $h3AF") # timhle mu reknete, aby naparsoval string, ktery jste napsali
 while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
 	print(l.popToken())
