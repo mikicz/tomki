@@ -133,6 +133,7 @@ class Lexer:
 		""" Vrati true, jestlize uz zadne dalsi tokeny nejsou. Vysvetlime si priste. """
 		return self._top >= len(self._tokens)
 
+
 	def topChar(self):
 		""" Vrati aktualne zpracovavany znak. Tohle je funkce jen proto, abychom
 		nemuseli porad psat ten slozity pristup. """
@@ -346,11 +347,17 @@ class Lexer:
 
 		elif (c == "$"):
 			self.popChar()
-			self.parseBinaryNumber()
-
-		elif (c == "\€"):
-			self.popChar()
-			self.parseHexadecimalNumber()
+			if self.topChar() == "b":
+				self.popChar()
+				self.parseBinaryNumber()
+			elif self.topChar() == "h":
+				self.popChar()
+				self.parseHexadecimalNumber()
+			elif self.topChar() == "d":
+				self.popChar()
+				self.parseNumber()
+			else:
+				self.error("Neznamy typ cisla")
 
 		elif (c == '\0'):
 			self.skonciuzkurva = 1 # aby to už kurva skončilo, nějak nefungovalo to počítadlo pozice a nechtělo se mi to říkat
@@ -361,6 +368,6 @@ class Lexer:
 
 # Tohle je ukazka pouziti a testovani
 l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
-l.analyzeString("€A") # timhle mu reknete, aby naparsoval string, ktery jste napsali
+l.analyzeString("$d3A") # timhle mu reknete, aby naparsoval string, ktery jste napsali
 while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
 	print(l.popToken())
