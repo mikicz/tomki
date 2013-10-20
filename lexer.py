@@ -200,7 +200,7 @@ class Lexer:
 		value = 0
 		if (not self.isHexadecimal(self.topChar())):
 			self.error("Zacatek cisla musi byt hexadecimalni cislo")
-		while (self.isDigit(self.topChar())):
+		while (self.isHexadecimal(self.topChar())):
 
 			x=self.topChar()
 			if ((x>='0') and (x<='9')):
@@ -368,6 +368,6 @@ class Lexer:
 
 # Tohle je ukazka pouziti a testovani
 l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
-l.analyzeString("$d3A") # timhle mu reknete, aby naparsoval string, ktery jste napsali
+l.analyzeString("$h3A") # timhle mu reknete, aby naparsoval string, ktery jste napsali
 while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
 	print(l.popToken())
