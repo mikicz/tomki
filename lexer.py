@@ -63,7 +63,8 @@ class Lexer:
 		""" Inicializuje lexikalni analyzator. Zalozi pole tokenu, zalozi seznam klicovych slov, atd. """
 		self._tokens = [] # seznam tokenu, ktere jsme uz naparsovali
 		self._keywords = {} # seznam klicovych slov. Ulozena jsou jako [klicove slovo] = typ tokenu odpovidajici
-		self.soucasnyradek = 1 # počítadlo současného řádku do chybového hlášení
+		self.currentline = 1 # počítadlo současného řádku do chybového hlášení
+		self.currentcolumn = 1 #počítadlo současného znaku
 		self.skonciuzkurva = 0 # nějak to nechtělo skončit, tak jsem to udělal takhle
 
 		#klíčová slova
@@ -118,7 +119,8 @@ class Lexer:
 		Takze \n je konec radky, a ne opacne lomitko a male n. To by se napsalo jako \\n.
 		"""
 		if (a == "\n"):
-			self.soucasnyradek+=1
+			self.currentline += 1
+			self.currentcolumn = 1
 		return (a in (' ','\t', '\n'))
 
 	def isBinary(self, a):
@@ -161,10 +163,11 @@ class Lexer:
 		"""
 		if (self._pos < len(self._string)):
 			self._pos += 1
+			self.currentcolumn += 1
 
 	def error(self, reason):
 		""" Funkce pro prehlednost, vypise ze doslo k chybe, k jake chybe doslo, a skonci program. """
-		print("Pri analyze doslo na radku "+str(self.soucasnyradek)+" k chybe z duvodu: ", reason)
+		print("Pri analyze doslo na radku "+str(self.currentline)+" cca v sloupci "+str(self.currentcolumn)+" k chybe z duvodu: ", reason)
 		sys.exit(1)
 
 	def addToken(self, tokenType, tokenValue = None, tokenLine = None):
@@ -203,7 +206,7 @@ class Lexer:
 				value = value + (ord(self.topChar()) - ord('0'))/x
 				self.popChar()
 
-		self.addToken(Lexer.NUMBER, value, self.soucasnyradek)
+		self.addToken(Lexer.NUMBER, value, self.currentline)
 
 	def parseBinaryNumber(self):
 		""" Naparsuje binární číslo a jeho hodnotu. """
@@ -213,7 +216,7 @@ class Lexer:
 		while (self.isDigit(self.topChar())):
 			value = value * 2 + (ord(self.topChar()) - ord('0'))
 			self.popChar()
-		self.addToken(Lexer.NUMBER, value, self.soucasnyradek)
+		self.addToken(Lexer.NUMBER, value, self.currentline)
 
 	def parseHexadecimalNumber(self):
 		""" Naparsuje hexadecimální číslo a jeho hodnotu. """
@@ -243,7 +246,7 @@ class Lexer:
 				
 			value = value * 16 + y
 			self.popChar()
-		self.addToken(Lexer.NUMBER, value, self.soucasnyradek)
+		self.addToken(Lexer.NUMBER, value, self.currentline)
 
 	
 	def parseIdentifierOrKeyword(self):
@@ -260,9 +263,9 @@ class Lexer:
 			self.popChar()
 		value = self._string[i : self._pos]
 		if (value in self._keywords):
-			self.addToken(self._keywords[value], None, self.soucasnyradek)
+			self.addToken(self._keywords[value], None, self.currentline)
 		else:
-			self.addToken(Lexer.IDENT, value, self.soucasnyradek)
+			self.addToken(Lexer.IDENT, value, self.currentline)
 
 	
 	def analyzeString(self, string):
@@ -284,7 +287,7 @@ class Lexer:
 		atd. a overi ze je vse v poradku. Token prida do seznamu naparsovanych tokenu. """
 		self.skipWhitespace()
 		c = self.topChar()
-		print c
+#		print c
 		if (self.isLetter(c)):
 			self.parseIdentifierOrKeyword()
 
@@ -294,36 +297,36 @@ class Lexer:
 #Operátory
 		elif (c == '+'):
 			self.popChar()
-			self.addToken(Lexer.OP_ADD, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_ADD, None, self.currentline)
 
 		elif (c == '='):
 			self.popChar()
 			c = self.topChar()
 			if (c == '='):
 				self.popChar()
-				self.addToken(Lexer.OP_EQ, None, self.soucasnyradek)
+				self.addToken(Lexer.OP_EQ, None, self.currentline)
 			else:
-				self.addToken(Lexer.OP_ASSIGN, None, self.soucasnyradek)
+				self.addToken(Lexer.OP_ASSIGN, None, self.currentline)
 
 		elif (c == '-'):
 			self.popChar()
-			self.addToken(Lexer.OP_SUBSTRACT, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_SUBSTRACT, None, self.currentline)
 
 		elif (c == '*'):
 			self.popChar()
 			c = self.topChar()
 			if (c == '*'):
 				self.popChar()
-				self.addToken(Lexer.OP_MOCNIT, None, self.soucasnyradek)
+				self.addToken(Lexer.OP_MOCNIT, None, self.currentline)
 			else:
-				self.addToken(Lexer.OP_MULTIPLY, None, self.soucasnyradek)
+				self.addToken(Lexer.OP_MULTIPLY, None, self.currentline)
 
 		elif (c == "/"):
 			self.popChar()
 			c = self.topChar()
 			if (c == '/'):
 				self.popChar()
-				self.addToken(Lexer.OP_FLOORDIVISION, None, self.soucasnyradek)
+				self.addToken(Lexer.OP_FLOORDIVISION, None, self.currentline)
 			elif (c == "*"):				# /* Komentář */
 				self.popChar()
 				while not(self.topChar() == "*" and self._string[self._pos+1] == "/"):
@@ -331,75 +334,75 @@ class Lexer:
 				self.popChar()
 				self.popChar()
 			else:
-				self.addToken(Lexer.OP_DIVIDE, None, self.soucasnyradek)
+				self.addToken(Lexer.OP_DIVIDE, None, self.currentline)
 
 		elif (c == "^"):
 			self.popChar()
-			self.addToken(Lexer.OP_MOCNIT, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_MOCNIT, None, self.currentline)
 
 		elif (c == "&"):
 			self.popChar()
-			self.addToken(Lexer.OP_AND, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_AND, None, self.currentline)
 
 		elif (c == "||"):
 			self.popChar()
-			self.addToken(Lexer.OP_OR, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_OR, None, self.currentline)
 
 		elif (c == "!"):
 			self.popChar()
-			self.addToken(Lexer.OP_NOT, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_NOT, None, self.currentline)
 
 		elif (c == "%"):
 			self.popChar()
-			self.addToken(Lexer.OP_REMAINDER, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_REMAINDER, None, self.currentline)
 
 		elif (c == ">"):
 			self.popChar()
 			c = self.topChar()
 			if (c == '='):
 				self.popChar()
-				self.addToken(Lexer.OP_BIGGEROREQUAL, None, self.soucasnyradek)
+				self.addToken(Lexer.OP_BIGGEROREQUAL, None, self.currentline)
 			else:
-				self.addToken(Lexer.OP_BIGGER, None, self.soucasnyradek)
+				self.addToken(Lexer.OP_BIGGER, None, self.currentline)
 
 		elif (c == "<"):
 			self.popChar()
 			c = self.topChar()
 			if (c == '='):
 				self.popChar()
-				self.addToken(Lexer.OP_SMALLEROREQUAL, None, self.soucasnyradek)
+				self.addToken(Lexer.OP_SMALLEROREQUAL, None, self.currentline)
 			elif (c == ">"):
 				self.popChar
-				self.addToken(Lexer.OP_NOTEQUAL, None, self.soucasnyradek)
+				self.addToken(Lexer.OP_NOTEQUAL, None, self.currentline)
 			else:
-				self.addToken(Lexer.OP_SMALLER, None, self.soucasnyradek)
+				self.addToken(Lexer.OP_SMALLER, None, self.currentline)
 
 # Závorky
 		elif (c == "("):
 			self.popChar()
-			self.addToken(Lexer.OP_PARENTHESES_LEFT, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_PARENTHESES_LEFT, None, self.currentline)
 		elif (c == ")"):
 			self.popChar()
-			self.addToken(Lexer.OP_PARENTHESES_RIGHT, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_PARENTHESES_RIGHT, None, self.currentline)
 		elif (c == "{"):
 			self.popChar()
-			self.addToken(Lexer.OP_BRACES_LEFT, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_BRACES_LEFT, None, self.currentline)
 		elif (c == "}"):
 			self.popChar()
-			self.addToken(Lexer.OP_BRACES_RIGHT, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_BRACES_RIGHT, None, self.currentline)
 		elif (c == "["):
 			self.popChar()
-			self.addToken(Lexer.OP_BRACKETS_RIGHT, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_BRACKETS_RIGHT, None, self.currentline)
 		elif (c == "]"):
 			self.popChar()
-			self.addToken(Lexer.OP_BRACKETS_LEFT, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_BRACKETS_LEFT, None, self.currentline)
 
 		elif (c == ","):
 			self.popChar()
-			self.addToken(Lexer.OP_COMMA, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_COMMA, None, self.currentline)
 		elif (c == ";"):
 			self.popChar()
-			self.addToken(Lexer.OP_SEMICOLON, None, self.soucasnyradek)
+			self.addToken(Lexer.OP_SEMICOLON, None, self.currentline)
 
 # Typy čísel
 		elif (c == "$"):
@@ -429,6 +432,9 @@ class Lexer:
 
 # Tohle je ukazka pouziti a testovani
 l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
-l.analyzeString("3.1415 # blabolim blbolak \n test /* bla 2/4*5 bla 3^5 */") # timhle mu reknete, aby naparsoval string, ktery jste napsali
+string = """ pokus 2/4
+5/6 baad
+"""
+l.analyzeString(string) # timhle mu reknete, aby naparsoval string, ktery jste napsali
 while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
 	print(l.popToken())
