@@ -13,7 +13,7 @@ class Lexer:
     """
 
 	EOF = "<EOF>" # typ token pro konec souboru, End Of File, oznacuje, ze uz neni zadny dalsi token za nim
-	_EOF = (EOF, None) # tohle je token, je to tuple z typu, a hodnoty, hodnota EOF je zadna
+	_EOF = (EOF, None, None) # tohle je token, je to tuple z typu, a hodnoty, hodnota EOF je zadna
 	NUMBER = "number" # token pro cislo, jeho hodnotou bude hodnota cisla
 	IDENT = "ident" # token pro identifikator, jeho hodnotou bude retezec s identifikatorem
 	# tohle jsou jen ukazky operatoru a klicovych slov, vase budou vypadat podle toho, jak bude vypadat vas jazyk
@@ -167,13 +167,13 @@ class Lexer:
 		print("Pri analyze doslo na radku "+str(self.soucasnyradek)+" k chybe z duvodu: ", reason)
 		sys.exit(1)
 
-	def addToken(self, tokenType, tokenValue = None):
+	def addToken(self, tokenType, tokenValue = None, tokenLine = None):
 		"""
 		Funkce, ktera prida dany druh tokenu a pripadne i hodnotu na seznam jiz
 		naparsovanych tokenu. Kdyz naparsujete nejaky token, musite zavolat tuhle
 		funkci.
 		"""
-		self._tokens.append((tokenType, tokenValue))
+		self._tokens.append((tokenType, tokenValue, tokenLine))
 
 	def skipWhitespace(self):
 		""" Preskoci whitespace v aktualne zpracovavanem retezci. """
@@ -203,7 +203,7 @@ class Lexer:
 				value = value + (ord(self.topChar()) - ord('0'))/x
 				self.popChar()
 
-		self.addToken(Lexer.NUMBER, value)
+		self.addToken(Lexer.NUMBER, value, self.soucasnyradek)
 
 	def parseBinaryNumber(self):
 		""" Naparsuje binární číslo a jeho hodnotu. """
@@ -213,7 +213,7 @@ class Lexer:
 		while (self.isDigit(self.topChar())):
 			value = value * 2 + (ord(self.topChar()) - ord('0'))
 			self.popChar()
-		self.addToken(Lexer.NUMBER, value)
+		self.addToken(Lexer.NUMBER, value, self.soucasnyradek)
 
 	def parseHexadecimalNumber(self):
 		""" Naparsuje hexadecimální číslo a jeho hodnotu. """
@@ -243,7 +243,7 @@ class Lexer:
 				
 			value = value * 16 + y
 			self.popChar()
-		self.addToken(Lexer.NUMBER, value)
+		self.addToken(Lexer.NUMBER, value, self.soucasnyradek)
 
 	
 	def parseIdentifierOrKeyword(self):
@@ -260,9 +260,9 @@ class Lexer:
 			self.popChar()
 		value = self._string[i : self._pos]
 		if (value in self._keywords):
-			self.addToken(self._keywords[value])
+			self.addToken(self._keywords[value], None, self.soucasnyradek)
 		else:
-			self.addToken(Lexer.IDENT, value)
+			self.addToken(Lexer.IDENT, value, self.soucasnyradek)
 
 	
 	def analyzeString(self, string):
@@ -294,36 +294,36 @@ class Lexer:
 #Operátory
 		elif (c == '+'):
 			self.popChar()
-			self.addToken(Lexer.OP_ADD)
+			self.addToken(Lexer.OP_ADD, None, self.soucasnyradek)
 
 		elif (c == '='):
 			self.popChar()
 			c = self.topChar()
 			if (c == '='):
 				self.popChar()
-				self.addToken(Lexer.OP_EQ)
+				self.addToken(Lexer.OP_EQ, None, self.soucasnyradek)
 			else:
-				self.addToken(Lexer.OP_ASSIGN)
+				self.addToken(Lexer.OP_ASSIGN, None, self.soucasnyradek)
 
 		elif (c == '-'):
 			self.popChar()
-			self.addToken(Lexer.OP_SUBSTRACT)
+			self.addToken(Lexer.OP_SUBSTRACT, None, self.soucasnyradek)
 
 		elif (c == '*'):
 			self.popChar()
 			c = self.topChar()
 			if (c == '*'):
 				self.popChar()
-				self.addToken(Lexer.OP_MOCNIT)
+				self.addToken(Lexer.OP_MOCNIT, None, self.soucasnyradek)
 			else:
-				self.addToken(Lexer.OP_MULTIPLY)
+				self.addToken(Lexer.OP_MULTIPLY, None, self.soucasnyradek)
 
 		elif (c == "/"):
 			self.popChar()
 			c = self.topChar()
 			if (c == '/'):
 				self.popChar()
-				self.addToken(Lexer.OP_FLOORDIVISION)
+				self.addToken(Lexer.OP_FLOORDIVISION, None, self.soucasnyradek)
 			elif (c == "*"):				# /* Komentář */
 				self.popChar()
 				while not(self.topChar() == "*" and self._string[self._pos+1] == "/"):
@@ -331,75 +331,75 @@ class Lexer:
 				self.popChar()
 				self.popChar()
 			else:
-				self.addToken(Lexer.OP_DIVIDE)
+				self.addToken(Lexer.OP_DIVIDE, None, self.soucasnyradek)
 
 		elif (c == "^"):
 			self.popChar()
-			self.addToken(Lexer.OP_MOCNIT)
+			self.addToken(Lexer.OP_MOCNIT, None, self.soucasnyradek)
 
 		elif (c == "&"):
 			self.popChar()
-			self.addToken(Lexer.OP_AND)
+			self.addToken(Lexer.OP_AND, None, self.soucasnyradek)
 
 		elif (c == "||"):
 			self.popChar()
-			self.addToken(Lexer.OP_OR)
+			self.addToken(Lexer.OP_OR, None, self.soucasnyradek)
 
 		elif (c == "!"):
 			self.popChar()
-			self.addToken(Lexer.OP_NOT)
+			self.addToken(Lexer.OP_NOT, None, self.soucasnyradek)
 
 		elif (c == "%"):
 			self.popChar()
-			self.addToken(Lexer.OP_REMAINDER)
+			self.addToken(Lexer.OP_REMAINDER, None, self.soucasnyradek)
 
 		elif (c == ">"):
 			self.popChar()
 			c = self.topChar()
 			if (c == '='):
 				self.popChar()
-				self.addToken(Lexer.OP_BIGGEROREQUAL)
+				self.addToken(Lexer.OP_BIGGEROREQUAL, None, self.soucasnyradek)
 			else:
-				self.addToken(Lexer.OP_BIGGER)
+				self.addToken(Lexer.OP_BIGGER, None, self.soucasnyradek)
 
 		elif (c == "<"):
 			self.popChar()
 			c = self.topChar()
 			if (c == '='):
 				self.popChar()
-				self.addToken(Lexer.OP_SMALLEROREQUAL)
+				self.addToken(Lexer.OP_SMALLEROREQUAL, None, self.soucasnyradek)
 			elif (c == ">"):
 				self.popChar
-				self.addToken(Lexer.OP_NOTEQUAL)
+				self.addToken(Lexer.OP_NOTEQUAL, None, self.soucasnyradek)
 			else:
-				self.addToken(Lexer.OP_SMALLER)
+				self.addToken(Lexer.OP_SMALLER, None, self.soucasnyradek)
 
 # Závorky
 		elif (c == "("):
 			self.popChar()
-			self.addToken(Lexer.OP_PARENTHESES_LEFT)
+			self.addToken(Lexer.OP_PARENTHESES_LEFT, None, self.soucasnyradek)
 		elif (c == ")"):
 			self.popChar()
-			self.addToken(Lexer.OP_PARENTHESES_RIGHT)
+			self.addToken(Lexer.OP_PARENTHESES_RIGHT, None, self.soucasnyradek)
 		elif (c == "{"):
 			self.popChar()
-			self.addToken(Lexer.OP_BRACES_LEFT)
+			self.addToken(Lexer.OP_BRACES_LEFT, None, self.soucasnyradek)
 		elif (c == "}"):
 			self.popChar()
-			self.addToken(Lexer.OP_BRACES_RIGHT)
+			self.addToken(Lexer.OP_BRACES_RIGHT, None, self.soucasnyradek)
 		elif (c == "["):
 			self.popChar()
-			self.addToken(Lexer.OP_BRACKETS_RIGHT)
+			self.addToken(Lexer.OP_BRACKETS_RIGHT, None, self.soucasnyradek)
 		elif (c == "]"):
 			self.popChar()
-			self.addToken(Lexer.OP_BRACKETS_LEFT)
+			self.addToken(Lexer.OP_BRACKETS_LEFT, None, self.soucasnyradek)
 
 		elif (c == ","):
 			self.popChar()
-			self.addToken(Lexer.OP_COMMA)
+			self.addToken(Lexer.OP_COMMA, None, self.soucasnyradek)
 		elif (c == ";"):
 			self.popChar()
-			self.addToken(Lexer.OP_SEMICOLON)
+			self.addToken(Lexer.OP_SEMICOLON, None, self.soucasnyradek)
 
 # Typy čísel
 		elif (c == "$"):
