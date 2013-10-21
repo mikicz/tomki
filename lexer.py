@@ -155,15 +155,15 @@ class Lexer:
 		nemuseli porad psat ten slozity pristup. """
 		return self._string[self._pos]
 
-	def popChar(self):
+	def popChar(self, value = 1):
 		"""
 		Posune nas na dalsi znak v aktualne analyzovanem retezci, pokud takovy
 		existuje. Zase funkce pro prehlednost, abychom nemuseli mit to kontrolovani
 		mezi vsude.
 		"""
 		if (self._pos < len(self._string)):
-			self._pos += 1
-			self.currentcolumn += 1
+			self._pos += value
+			self.currentcolumn += value
 
 	def error(self, reason):
 		""" Funkce pro prehlednost, vypise ze doslo k chybe, k jake chybe doslo, a skonci program. """
@@ -331,8 +331,7 @@ class Lexer:
 				self.popChar()
 				while not(self.topChar() == "*" and self._string[self._pos+1] == "/"):
 					self.popChar()
-				self.popChar()
-				self.popChar()
+				self.popChar(2)
 			else:
 				self.addToken(Lexer.OP_DIVIDE, None, self.currentline)
 
@@ -406,15 +405,14 @@ class Lexer:
 
 # Typy čísel
 		elif (c == "$"):
-			self.popChar()
 			if self.topChar() == "b":
-				self.popChar()
+				self.popChar(2)
 				self.parseBinaryNumber()
 			elif self.topChar() == "h":
-				self.popChar()
+				self.popChar(2)
 				self.parseHexadecimalNumber()
 			elif self.topChar() == "d":
-				self.popChar()
+				self.popChar(2)
 				self.parseNumber()
 			else:
 				self.error("Neznamy typ cisla")
@@ -433,7 +431,7 @@ class Lexer:
 # Tohle je ukazka pouziti a testovani
 l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
 string = """ pokus 2/4
-5/6 baad
+5/6 $baad
 """
 l.analyzeString(string) # timhle mu reknete, aby naparsoval string, ktery jste napsali
 while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
