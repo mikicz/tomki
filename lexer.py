@@ -324,6 +324,12 @@ class Lexer:
 			if (c == '/'):
 				self.popChar()
 				self.addToken(Lexer.OP_FLOORDIVISION)
+			elif (c == "*"):				# /* Komentář */
+				self.popChar()
+				while not(self.topChar() == "*" and self._string[self._pos+1] == "/"):
+					self.popChar()
+				self.popChar()
+				self.popChar()
 			else:
 				self.addToken(Lexer.OP_DIVIDE)
 
@@ -410,6 +416,10 @@ class Lexer:
 			else:
 				self.error("Neznamy typ cisla")
 
+		elif (c == "#"):	# komentář
+			self.popChar()
+			while self.topChar() != "\n":
+				self.popChar()
 		elif (c == '\0'):
 			self.skonciuzkurva = 1 # aby to už kurva skončilo, nějak nefungovalo to počítadlo pozice a nechtělo se mi to říkat
 
@@ -419,6 +429,6 @@ class Lexer:
 
 # Tohle je ukazka pouziti a testovani
 l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
-l.analyzeString("3.1415") # timhle mu reknete, aby naparsoval string, ktery jste napsali
+l.analyzeString("3.1415 # blabolim blbolak \n test /* bla 2/4*5 bla 3^5 */") # timhle mu reknete, aby naparsoval string, ktery jste napsali
 while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
 	print(l.popToken())
