@@ -419,6 +419,6 @@ class Lexer:
 
 # Tohle je ukazka pouziti a testovani
 l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
-l.analyzeString("for(i,i++,i<10){try $b101001 + $h3AF") # timhle mu reknete, aby naparsoval string, ktery jste napsali
+l.analyzeString("3.1415") # timhle mu reknete, aby naparsoval string, ktery jste napsali
 while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
 	print(l.popToken())
