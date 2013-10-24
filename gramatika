@@ -7,3 +7,13 @@ HEXADECIMALNICISLO ::= "$h" 0..9|A..F{0..9|A..F}
 OPERATOR ::= +|-|/|*|^|&|!|"|"|and|or|not|==|!=|%|**|//|<>|>|<|>=|<=|&|"||"|!
 RIDICIZNAKY ::= "("|")"|"{"|"}"|"["|"]"			# prakticky totéž co operátory
 KEYWORD ::= if|else|elif|while|for|break|continue|return
+
+#podminky
+
+F :: = [ - ] F2
+F2 ::= number | ident | FCALL
+FCALL ::= ident '(' ARGS ')''
+ARGS ::= [ E {, E }]
+
+E :: F { OP F} 
+OP ::= + | - | * | / ...
