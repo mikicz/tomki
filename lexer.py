@@ -82,21 +82,6 @@ class Lexer:
 		self._keywords["or"] = Lexer.OP_OR
 		self._keywords["not"] = Lexer.OP_NOT
 
-		self._keywords["IF"] = Lexer.KW_IF 
-		self._keywords["ELSE"] = Lexer.KW_ELSE
-		self._keywords["ELIF"] = Lexer.KW_ELIF
-		self._keywords["WHILE"] = Lexer.KW_WHILE
-		self._keywords["FOR"] = Lexer.KW_FOR
-		self._keywords["BREAK"] = Lexer.KW_BREAK
-		self._keywords["CONTINUE"] = Lexer.KW_CONTINUE
-		self._keywords["RETURN"] = Lexer.KW_RETURN
-		self._keywords["FUNCTION"] = Lexer.KW_FUNCTION
-
-		self._keywords["AND"] = Lexer.OP_AND
-		self._keywords["OR"] = Lexer.OP_OR
-		self._keywords["NOT"] = Lexer.OP_NOT
-
-
 		self._top = 0 # ukazatel na token ktery vrati funkce topToken() vysvetlime si pozdeji
 		self._string = "" # aktualne zpracovavany retezec
 		self._pos = 0 # pozice v aktualne zpracovavanem retezci
@@ -150,10 +135,10 @@ class Lexer:
 		return self._top >= len(self._tokens)
 
 
-	def topChar(self):
+	def topChar(self, value = 1):
 		""" Vrati aktualne zpracovavany znak. Tohle je funkce jen proto, abychom
 		nemuseli porad psat ten slozity pristup. """
-		return self._string[self._pos]
+		return self._string[self._pos:self._pos + value]
 
 	def popChar(self, value = 1):
 		"""
@@ -261,7 +246,7 @@ class Lexer:
 			self.error("Identifikator musi zacinat pismenem")
 		while (self.isLetter(self.topChar()) or self.isDigit(self.topChar())):
 			self.popChar()
-		value = self._string[i : self._pos]
+		value = self._string[i : self._pos].lower()
 		if (value in self._keywords):
 			self.addToken(self._keywords[value], None, self.currentline)
 		else:
@@ -405,14 +390,15 @@ class Lexer:
 
 # Typy čísel
 		elif (c == "$"):
+			self.popChar()
 			if self.topChar() == "b":
-				self.popChar(2)
+				self.popChar()
 				self.parseBinaryNumber()
 			elif self.topChar() == "h":
-				self.popChar(2)
+				self.popChar()
 				self.parseHexadecimalNumber()
 			elif self.topChar() == "d":
-				self.popChar(2)
+				self.popChar()
 				self.parseNumber()
 			else:
 				self.error("Neznamy typ cisla")
@@ -430,8 +416,7 @@ class Lexer:
 
 # Tohle je ukazka pouziti a testovani
 l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
-string = """ pokus 2/4
-5/6 $baad
+string = """ pokus Test $b10110
 """
 l.analyzeString(string) # timhle mu reknete, aby naparsoval string, ktery jste napsali
 while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
