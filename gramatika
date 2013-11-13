@@ -9,11 +9,20 @@ RIDICIZNAKY ::= "("|")"|"{"|"}"|"["|"]"			# prakticky totéž co operátory
 KEYWORD ::= if|else|elif|while|for|break|continue|return
 
 #podminky
+PROGRAM ::= { STATEMENT }
 
-F :: = [ - ] F2
-F2 ::= number | ident | FCALL
-FCALL ::= ident '(' ARGS ')''
-ARGS ::= [ E {, E }]
+STATEMENT ::= CONDITION | LOOP | EXPRESSION
 
-E :: F { OP F} 
-OP ::= + | - | * | / ...
+BLOCK ::= ‘{‘ { STATEMENT } ‘}‘
+
+CONDITION ::= KW_IF ‘(‘ EXPRESSION ‘)‘ BLOCK { KW_ELIF ‘(‘ EXPRESSION ‘)‘ BLOCK } [ KW_ELSE BLOCK ]
+
+LOOP ::= KW_WHILE ‘(‘ EXPRESSION ‘)‘ BLOCK | KW_FOR in ( ident | FCALL ) BLOCK
+
+EXPRESSION ::= E1 { ( + | – ) E1
+E1 ::= E2 { ( * | / ) E2
+E2 ::= [ - ] F
+F ::= number | ident | FCALL | ‘(‘ EXPRESSION ‘)’
+
+FCALL ::= ident ‘(‘ ARGS ‘)’
+ARGS ::= [ E { , E } ]
