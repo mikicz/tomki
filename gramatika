@@ -11,18 +11,18 @@ KEYWORD ::= if|else|elif|while|for|break|continue|return
 #podminky
 PROGRAM ::= { STATEMENT }
 
-STATEMENT ::= CONDITION | LOOP | EXPRESSION
+STATEMENT ::= ( CONDITION | LOOP | E ) ;
 
 BLOCK ::= ‘{‘ { STATEMENT } ‘}‘
 
-CONDITION ::= KW_IF ‘(‘ EXPRESSION ‘)‘ BLOCK { KW_ELIF ‘(‘ EXPRESSION ‘)‘ BLOCK } [ KW_ELSE BLOCK ]
+CONDITION ::= KW_IF ‘(‘ E ‘)‘ BLOCK { KW_ELIF ‘(‘ E ‘)‘ BLOCK } [ KW_ELSE BLOCK ]
 
-LOOP ::= KW_WHILE ‘(‘ EXPRESSION ‘)‘ BLOCK | KW_FOR in ( ident | FCALL ) BLOCK
+LOOP ::= KW_WHILE ‘(‘ E ‘)‘ BLOCK | KW_FOR in ( ident | FCALL ) BLOCK
 
-EXPRESSION ::= E1 { ( + | – ) E1
+E ::= E1 { ( + | – ) E1 }
 E1 ::= E2 { ( * | / ) E2
 E2 ::= [ - ] F
-F ::= number | ident | FCALL | ‘(‘ EXPRESSION ‘)’
+F ::= number | ident | FCALL | ‘(‘ E ‘)’
 
 FCALL ::= ident ‘(‘ ARGS ‘)’
 ARGS ::= [ E { , E } ]

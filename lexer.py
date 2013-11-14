@@ -123,11 +123,13 @@ class Lexer:
 		else:
 			return Lexer._EOF
 
-	def popToken(self):
+	def popToken(self, value=None):
 		""" Posune se na dalsi token. Vysvetlime priste. """
 		t = self.topToken()
-		if (self._top < len(self._tokens)):
+		if (self._top < len(self._tokens) and (value=None or value=t[0])):
 			self._top += 1
+		else:
+			self.error("Očekáván jiný typ tokenu")
 		return t
 
 	def isEOF(self):
