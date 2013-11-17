@@ -13,16 +13,22 @@ PROGRAM ::= { STATEMENT }
 
 STATEMENT ::= ( CONDITION | LOOP | E ) ;
 
-BLOCK ::= ‘{‘ { STATEMENT } ‘}‘
+BLOCK ::= '{' { STATEMENT } '}'
 
-CONDITION ::= KW_IF ‘(‘ E ‘)‘ BLOCK { KW_ELIF ‘(‘ E ‘)‘ BLOCK } [ KW_ELSE BLOCK ]
+CONDITION ::= KW_IF '(' E ')' BLOCK { KW_ELIF '(' E ')' BLOCK } [ KW_ELSE BLOCK ]
 
-LOOP ::= KW_WHILE ‘(‘ E ‘)‘ BLOCK | KW_FOR in ( ident | FCALL ) BLOCK
+LOOP ::= KW_WHILE '(' E ')' BLOCK | KW_FOR ident ( in | IN | iN | In) ( ident | FCALL ) BLOCK
 
-E ::= E1 { ( + | – ) E1 }
-E1 ::= E2 { ( * | / ) E2
-E2 ::= [ - ] F
-F ::= number | ident | FCALL | ‘(‘ E ‘)’
+E ::= E1 { OP_ASSIGN E1 }
+E1 ::= E2 { OP_OR E2 }
+E2 ::= E3 { OP_AND E3 }
+E3 ::= E4 { ( OP_EQUAL | OP_NOTEQUAL ) E4 }
+E4 ::= E5 { ( OP_BIGGER | OP_SMALLER | OP_BIGGEROREQUAL | OP_SMALLERORERUAL ) E5 }
+E5 ::= E6 { ( OP_ADD | OP_SUBSTRACT ) E6 }
+E6 ::= E7 { ( OP_MULTIPLY | OP_MOCNIT | OP_FLOORDIVISION | OP_REMAINDER ) E7 }
+E7 ::= [ OP_SUBSTRACT ] F
+F ::= number | ident [ OP_BRACKETS_LEFT E OP_BRACKETS_RIGHT ] | FCALL | OP_PARENTHESES_LEFT E OP_PARENTHESES_RIGHT
 
-FCALL ::= ident ‘(‘ ARGS ‘)’
-ARGS ::= [ E { , E } ]
+FCALL ::= ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT
+
+ARGS ::= [ E { OP_COMMA E } ]
