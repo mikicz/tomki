@@ -103,6 +103,7 @@ class Lexer:
 		kterymi muzeme zapisovat specialni znaky, ktere nejsou na klavesnici.
 		Takze \n je konec radky, a ne opacne lomitko a male n. To by se napsalo jako \\n.
 		"""
+
 		if (a == "\n"):
 			self.currentline += 1
 			self.currentcolumn = 1
