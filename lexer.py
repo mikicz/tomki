@@ -24,6 +24,7 @@ class Lexer:
 	KW_ELIF = "elif"
 	KW_WHILE = "while"
 	KW_FOR = "for"
+	KW_IN = "in"
 	KW_BREAK = "break"
 	KW_CONTINUE = "continue"
 	KW_RETURN = "return"

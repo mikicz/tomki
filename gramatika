@@ -17,7 +17,7 @@ BLOCK ::= OP_BRACES_LEFT { STATEMENT } OP_BRACES_RIGHT
 
 CONDITION ::= KW_IF '(' E ')' BLOCK { KW_ELIF '(' E ')' BLOCK } [ KW_ELSE BLOCK ]
 
-LOOP ::= KW_WHILE '(' E ')' BLOCK | KW_FOR ident ( in | IN | iN | In) ( ident | FCALL ) BLOCK
+LOOP ::= KW_WHILE '(' E ')' BLOCK | KW_FOR ident KW_IN ( ident | FCALL | FIELD) BLOCK
 
 FIELD :== OP_BRACKETS_LEFT ( F ){ ,F } OP_BRACKETS_RIGHT
 
