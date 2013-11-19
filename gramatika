@@ -11,7 +11,7 @@ KEYWORD ::= if|else|elif|while|for|break|continue|return
 #podminky
 PROGRAM ::= { STATEMENT }
 
-STATEMENT ::= ( CONDITION | LOOP | E ) ;
+STATEMENT ::= ( CONDITION | LOOP | E | FDEF ) ;
 
 BLOCK ::= OP_BRACES_LEFT { STATEMENT } OP_BRACES_RIGHT
 
@@ -19,7 +19,9 @@ CONDITION ::= KW_IF '(' E ')' BLOCK { KW_ELIF '(' E ')' BLOCK } [ KW_ELSE BLOCK 
 
 LOOP ::= KW_WHILE '(' E ')' BLOCK | KW_FOR ident KW_IN ( ident | FCALL | FIELD) BLOCK
 
-FIELD :== OP_BRACKETS_LEFT [ F ]{ ,F } OP_BRACKETS_RIGHT
+FIELD :== OP_BRACKETS_LEFT [ F ]{ ,F } OP_BRACKETS_RIGHT # definice pole
+
+FDEF :== ident OP_ASSING KW_FUNCTION OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT BLOCK # definice funkce např mergesort = function (pole)
 
 E ::= E1 [ OP_ASSIGN E1 ]
 E1 ::= E2 { OP_OR E2 }
