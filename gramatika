@@ -6,7 +6,7 @@ BINARNICISLO ::= "$b" 0|1{0|1}						# binární a hex čísla pouze s $b nebo $h
 HEXADECIMALNICISLO ::= "$h" 0..9|A..F{0..9|A..F}
 OPERATOR ::= +|-|/|*|^|&|!|"|"|and|or|not|==|!=|%|**|//|<>|>|<|>=|<=|&|"||"|!
 RIDICIZNAKY ::= "("|")"|"{"|"}"|"["|"]"			# prakticky totéž co operátory
-KEYWORD ::= if|else|elif|while|for|break|continue|return
+KEYWORD ::= if|else|elif|while|for|break|continue|return|function|in
 
 #podminky
 PROGRAM ::= { STATEMENT }
