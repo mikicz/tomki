@@ -74,6 +74,7 @@ class Lexer:
 		self._keywords["elif"] = Lexer.KW_ELIF
 		self._keywords["while"] = Lexer.KW_WHILE
 		self._keywords["for"] = Lexer.KW_FOR
+		self._keywords["in"] = Lexer.KW_IN
 		self._keywords["break"] = Lexer.KW_BREAK
 		self._keywords["continue"] = Lexer.KW_CONTINUE
 		self._keywords["return"] = Lexer.KW_RETURN
