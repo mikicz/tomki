@@ -53,12 +53,19 @@ class Parser:
 		return program
 
 	def parseStatement(self):
-		""" STATEMENT ::= IF_STATEMENT | ASSIGNMENT 
-		
+		""" STATEMENT ::= ( CONDITION | LOOP | E | FDEF ) ;
+
 		Statement je bud if, nebo zapis promenne. 
 		"""
-		if (self.top()[0] == Lexer.KW_IF):
+		if (self.top()[0] == Lexer.KW_IF): #podmínka
 			return self.parseIfStatement()
+		elif (self.top()[0] == Lexer.KW_WHILE): #while
+			return self.parseWhile()
+		elif (self.top()[0] == Lexer.KW_FOR): #for
+			return self.parseFor()
+		elif (self.top()[0] == Lexer.KW_FUNCTION): #funkce
+			return self.parseFunction
+
 		else:
 			return self.parseAssignment()
 
