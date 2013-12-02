@@ -57,14 +57,76 @@ class Literal:
 		return self.value
 
 class If:
-	""" Prikaz if. Pamatuje si vyraz ktery je podminkou a pak bloky pro true a else casti. """
-	def __init__(self, condition, trueCase, falseCase):
+	""" Prikaz if. Pamatuje si vyraz ktery je podminkou a pak bloky pro true a else casti. 
+
+	CONDITION ::= KW_IF '(' E ')' BLOCK { KW_ELIF '(' E ')' BLOCK } [ KW_ELSE BLOCK ]
+
+	"""
+	def __init__(self, condition, trueCase, elifs, falseCase):
 		self.condition = condition
 		self.trueCase = trueCase
+		self.elifs = elifs # prázdné [], ve formátu [[condition, block], ...]
 		self.falseCase = falseCase
 
 	def __str__(self):
-		return "if (%s) %s else %s" % (self.condition, self.trueCase, self.falseCase)
+		if self.elifs == []:
+			a = "if (%s) %s else %s" % (self.condition, self.trueCase, self.falseCase)
+		else:
+			a = "if ("+self.condition+") " + self.trueCase
+			for x in self.elifs:
+				a += " elif ("+x[0]+") " + x[1]
+			a+= " else " + self.falseCase
+		return a
+
+
+class While:
+	""" Pamatuje si podmínku a blok, který opakuje 
+	KW_WHILE '(' E ')' BLOCK
+	 """
+
+	def __init__(self, condition, block):
+		self.condition = condition
+		self.block = block
+
+	def __str__(self):
+		return "while (%s) %s" % (self.condition, self.block)
+
+class For:
+	""" pamatuje si kam se má ukládat jednotlivý prvek seznamu, seznam a block
+	KW_FOR ident KW_IN ( ident | FCALL | FIELD) BLOCK
+	"""
+
+	def __init__(self, variable, array, block):
+		self.variable = variable
+		self.array = array
+		self.block = block
+
+	def __str__(self):
+		return "for (%s) in %s %s" % (self.variable, self.array, self.block)
+
+class Function:
+	"""pamatuje si jméno funkce, parametry a blok
+	KW_FUNCTION OP_ASSING ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT BLOCK
+	"""
+
+	def __init__(self, name, arrgs, block):
+		self.name = name
+		self.arrgs = arrgs
+		self.block = block
+
+	def __init__(self):
+		if (self.arrgs == []):
+			return "function = %s () %s" % (self.name, self.block)
+		else:
+			a = "function = %s ("
+			x=1
+			for y in self.arrgs:
+				if x == 1:
+					a += y
+				else:
+					a += ", "+ y
+			a += ") " + self.block
+			return a
 
 
 

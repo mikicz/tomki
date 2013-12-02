@@ -29,7 +29,6 @@ class Lexer:
 	KW_CONTINUE = "continue"
 	KW_RETURN = "return"
 	KW_FUNCTION = "function"
-	KW_IN = "in"
 
 	#operace
 	OP_ADD = "+" # operator scitani
@@ -80,7 +79,6 @@ class Lexer:
 		self._keywords["continue"] = Lexer.KW_CONTINUE
 		self._keywords["return"] = Lexer.KW_RETURN
 		self._keywords["function"] = Lexer.KW_FUNCTION
-		self._keywords["in"] = Lexer.KW_IN
 
 		self._keywords["and"] = Lexer.OP_AND
 		self._keywords["or"] = Lexer.OP_OR
@@ -415,6 +413,7 @@ class Lexer:
 			while self.topChar() != "\n":
 				self.popChar()
 		elif (c == '\0'):
+			self.addToken(Lexer._EOF)
 			self.skonciuzkurva = 1 # aby to už kurva skončilo, nějak nefungovalo to počítadlo pozice a nechtělo se mi to říkat
 
 		else:
