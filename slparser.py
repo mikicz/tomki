@@ -35,10 +35,10 @@ class Parser:
 		else:
 			raise SyntaxError("Ocekavany token " + type + " neni na vstupu (" + t[0] + " misto nej)")
 
-	def top(self):
+	def top(self, i = 0):
 		""" Abych nemusel tolik psat, provede top() z lexeru. 
 		"""
-		return self.lexer.topToken()
+		return self.lexer.topToken(i)
 
 	def parse(self):
 		""" Hlavni metoda na parsovani, odpovida pravidlu pro program:
@@ -161,6 +161,23 @@ class Parser:
 		block = self.parseBlock()
 
 		return While(condition, block)
+
+	def parseFor(self):
+		"""
+		KW_FOR ident KW_IN ( ident | FCALL | FIELD) BLOCK
+		"""
+
+		self.pop(Lexer.KW_FOR)
+		var = self. # ident
+		self.pop(Lexer.KW_In)
+		if ( self.top()[0] == Lexer.IDENT and self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT ):
+			array = self. #function call
+		elif ( self.top()[0] == Lexer.IDENT ):
+			array = self. # ident
+		elif ( self.top()[0] == Lexer.OP_BRACKETS_LEFT ):
+			array = self. # pole
+		block = self.parseBlock()
+		return For(var,array,block)
 
 	def parseBlock(self):
 		""" BLOCK ::= op_braceopen { STATEMENT } op_braceclose

@@ -119,10 +119,10 @@ class Lexer:
 		""" Funkce, která zjisti, jestli je daný znak číslice hexidecimální soustavy. """
 		return ((a>='0') and (a<='9')) or ((a>="A") and (a<="F")) or ((a>="a") and (a<="f"))
 
-	def topToken(self):
+	def topToken(self, i = 0):
 		""" Vrati aktualni token. Vysvetlime si priste. """
 		if (self._top < len(self._tokens)):
-			return self._tokens[self._top]
+			return self._tokens[ self._top  + i ]
 		else:
 			return Lexer._EOF
 
