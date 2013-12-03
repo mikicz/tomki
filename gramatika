@@ -21,7 +21,7 @@ LOOP ::= KW_WHILE '(' E ')' BLOCK | KW_FOR ident KW_IN ( ident | FCALL | FIELD) 
 
 FIELD :== OP_BRACKETS_LEFT [ F ]{ ,F } OP_BRACKETS_RIGHT # definice pole
 
-FDEF :== KW_FUNCTION OP_ASSING ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT BLOCK # definice funkce např mergesort = function (pole)
+FDEF :== KW_FUNCTION ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT BLOCK # definice funkce např mergesort = function (pole)
 
 E ::= E1 [ OP_ASSIGN E1 ]
 E1 ::= E2 { OP_OR E2 }

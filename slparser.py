@@ -65,7 +65,6 @@ class Parser:
 			return self.parseFor()
 		elif (self.top()[0] == Lexer.KW_FUNCTION): #funkce
 			return self.parseFunction
-
 		else:
 			return self.parseAssignment()
 
@@ -121,23 +120,47 @@ class Parser:
 			return result 
 
 	def parseIfStatement(self):
-		""" IF_STATEMENT ::= if op_paropen EXPRESSION op_parclose [ BLOCK ] [ else BLOCK ]
+		""" 
+		CONDITION ::= KW_IF '(' E ')' BLOCK { KW_ELIF '(' E ')' BLOCK } [ KW_ELSE BLOCK ]
 	   
-	    If podminka je klasicky podminka a za ni if, pripadne else block. Vsimnete si, ze oba dva jsou vlastne v moji gramatice nepovinne. 
+	    If podminka je klasicky podminka a za ni if, pripadne else block.
 	    """
 		self.pop(Lexer.KW_IF)
-		self.pop(Lexer.OP_PAROPEN)
+		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		condition = self.parseExpression()
-		self.pop(Lexer.OP_PARCLOSE)
-		trueCase = Block() # to aby se nam chybeji vetev sprave zobrazila jako {}
-		falseCase = Block() # to aby se nam chybeji vetev sprave zobrazila jako {}
-		if (self.top()[0] == Lexer.OP_BRACEOPEN): # kdyz hned po podmince je {, vim ze je to if cast
-			trueCase = self.parseBlock()
-		if (self.top()[0] == Lexer.KW_ELSE): # jinak za ifem muze byt jeste else pro else cast
+		self.pop(Lexer.OP_PARENTHESES_RIGHT)
+		trueCase = self.parseBlock()
+
+		elifs = []
+		while (self.top[0] == Lexer.KW_ELIF):
+			self.pop()
+			self.pop(Lexer.OP_PARENTHESES_LEFT)
+			x = self.parseExpression() #podmínka 
+			self.pop(Lexer.OP_PARENTHESES_RIGHT)
+			y = self.parseBlock() #blok
+			elifs.append([x,y])
+
+		if (self.top()[0] == Lexer.KW_ELSE): # za elify muze byt ještě else
 			self.pop()
 			falseCase = self.parseBlock()
+		else: # to aby se nam chybeji vetev sprave zobrazila jako {}
+			falseCase = Block() 
+		
 		# cokoli ostatniho by bylo za ifem, neni soucasti ifu
-		return If(condition, trueCase, falseCase)
+		return If(condition, trueCase,elifs, falseCase)
+
+	def parseWhile(self):
+		"""
+		KW_WHILE '(' E ')' BLOCK
+		"""
+
+		self.pop(Lexer.KW_WHILE)
+		self.pop(Lexer.OP_PARENTHESES_LEFT)
+		condition = self.parseExpression()
+		self.pop(Lexer.OP_PARENTHESES_RIGHT)
+		block = self.parseBlock()
+
+		return While(condition, block)
 
 	def parseBlock(self):
 		""" BLOCK ::= op_braceopen { STATEMENT } op_braceclose
