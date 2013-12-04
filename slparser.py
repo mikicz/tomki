@@ -143,10 +143,21 @@ class Parser:
 		if (self.top()[0] == Lexer.NUMBER):
 			value = self.pop()[1]
 			return Literal(value)
-		elif (self.top()[0] == Lexer.IDENT) and (self.top()[1] != Lexer.OP_BRACKETS_LEFT):
+
+		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] != Lexer.OP_BRACKETS_LEFT):
 			variableName = self.pop()[1]
 			return VariableRead(variableName)
-		elif (self.top()[0] == Lexer.IDENT) and (self.top()[1] == Lexer.OP_BRACKETS_LEFT):
+
+		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_BRACKETS_LEFT):
+			pass
+			#tady bude čtení proměných, co jsou seznamy
+
+		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
+			return self.parseFunctionCall
+
+		elif (self.top()[0] == Lexer.OP_BRACKETS_LEFT):
+			return parseField()
+
 		else:
 			self.pop(Lexer.OP_PARENTHESES_LEFT)
 			result = self.parseExpression()
@@ -228,11 +239,13 @@ class Parser:
 	def parseFunctionCall(self):
 		""" FCALL ::= ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT """
 		functionName=self.pop(Lexer.IDENT)
-		self.pop(OP_PARENTHESES_LEFT)
+		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		arrgs=[]
-		while(): #tohle se ještě musí dořešit
-			arrgs.append(arg)
-		self.pop(OP_PARENTHESES_RIGHT)
+		while(self.top()[0] != Lexer.OP_PARENTHESES_RIGHT): 
+			arrgs.append(self.parseE4())
+			if self.top()[0] == Lexer.OP_COMMA:
+				self.pop(Lexer.OP_COMMA)
+		self.pop(Lexer.OP_PARENTHESES_RIGHT)
 		return FunctionCall(functionName,arrgs)
 
 	def parseFunction(self):
@@ -240,7 +253,7 @@ class Parser:
 		functionName=self.pop(Lexer.IDENT)
 		self.pop(OP_PARENTHESES_LEFT)
 		arrgs=[]
-		while(self.top()[0] == Lexer.IDENT): #tohle se ještě musí dořešit
+		while(self.top()[0] == Lexer.IDENT): 
 			arrgs.append(ArrgIdent(self.pop(Lexer.IDENT)[1]))
 			if self.top()[0] == Lexer.OP_COMMA:
 				self.pop(Lexer.OP_COMMA)
@@ -248,5 +261,13 @@ class Parser:
 		self.pop(OP_PARENTHESES_RIGHT)
 		block = self.parseBlock()
 		return FunctionWrite(functionName, arrgs, block)
+
+	def parseField(self):
+		self.pop(OP_BRACKETS_LEFT)
+		polozkypole = []
+		while(self.top()[0] != OP_BRACKETS_RIGHT):
+			polozkypole.append(self.parseE4())
+		self.pop(OP_BRACKETS_RIGHT)
+		return Field(polozkypole)
 
 

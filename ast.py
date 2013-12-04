@@ -155,6 +155,21 @@ class ArrgIdent:
 	def __str__(self):
 		return self.name
 
+class Field:
+	def __init__(self,polozkypole):
+		self.polozkypole = polozkypole
+
+	def __str__(self):
+		a = "["
+		for i in self.polozkypole:
+			if (a == "["):
+				a += i
+			else:
+				a += "," + i
+		a += "]"
+		return a
+
+
 
 
 
