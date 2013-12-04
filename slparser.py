@@ -79,9 +79,7 @@ class Parser:
 		return VariableWrite(variableName, rhs)
 
 	def parseExpression(self):
-		""" EXPRESSION ::= E1 [ OP_ASSIGN E1 ]
-	   
-		"""
+		""" EXPRESSION ::= E1 [ OP_ASSIGN E1 ] """
 		lhs = self.parseE1()
 		while (self.top()[0] == Lexer.OP_ASSIGN):
 			self.pop()
@@ -90,8 +88,7 @@ class Parser:
 		return lhs
 
 	def parseE1(self):
-		""" E1 ::= E2 { OP_OR E2 }
-		"""
+		""" E1 ::= E2 { OP_OR E2 } """
 		lhs = self.parseE2()
 		while (self.top()[0] == Lexer.OP_OR):
 			self.pop()[0]
@@ -100,8 +97,7 @@ class Parser:
 		return lhs
 
 	def parseE2(self):
-		""" E2 ::= E3 { OP_OR E3 }
-		"""
+		""" E2 ::= E3 { OP_OR E3 } """
 		lhs = self.parseE3()
 		while (self.top()[0] == Lexer.OP_AND):
 			self.pop()[0]
@@ -110,10 +106,7 @@ class Parser:
 		return lhs
 
 	def parseE3(self):
-		""" E3 ::= E4 { ( OP_EQUAL | OP_NOTEQUAL ) E4 }
-	
-		Druhy level priorit je scitani a odcitani. Opet se jedna o binarni operatory. 
-		"""
+		""" E3 ::= E4 { ( OP_EQUAL | OP_NOTEQUAL ) E4 } """
 		lhs = self.parseE4()
 		while (self.top()[0] in (Lexer.OP_EQUAL, Lexer.OP_NOTEQUAL)):
 			op = self.pop()[0]
@@ -122,15 +115,40 @@ class Parser:
 		return lhs
 	
 	def parseE4(self):
-		""" E4 ::= E5 { ( OP_BIGGER | OP_SMALLER | OP_BIGGEROREQUAL | OP_SMALLEROREQUAL ) E5 }
-	
-		Druhy level priorit je scitani a odcitani. Opet se jedna o binarni operatory. 
-		"""
-		lhs = self.parseE4()
-		while (self.top()[0] in (Lexer.OP_EQUAL, Lexer.OP_NOTEQUAL)):
+		""" E4 ::= E5 { ( OP_BIGGER | OP_SMALLER | OP_BIGGEROREQUAL | OP_SMALLEROREQUAL ) E5 } """
+		lhs = self.parseE5()
+		while (self.top()[0] in (Lexer.OP_BIGGER, Lexer.OP_SMALLER, Lexer.OP_BIGGEROREQUAL, Lexer.OP_SMALLEROREQUAL)):
 			op = self.pop()[0]
-			rhs = self.parseE4()
+			rhs = self.parseE5()
 			lhs = BinaryOperator(lhs, rhs, op)
+		return lhs
+
+	def parseE5(self):
+		""" E5 ::= E6 { ( OP_ADD | OP_SUBSTRACT ) E6 } """
+		lhs = self.parseE6()
+		while (self.top()[0] in (Lexer.OP_ADD, Lexer.OP_SUBSTRACT)):
+			op = self.pop()[0]
+			rhs = self.parseE6()
+			lhs = BinaryOperator(lhs, rhs, op)
+		return lhs
+
+	def parseE6(self):
+		""" E6 ::= E7 { ( OP_MULTIPLY | OP_MOCNIT | OP_FLOORDIVISION | OP_REMAINDER ) E7 } """
+		lhs = self.parseE7()
+		while (self.top()[0] in (Lexer.OP_MULTIPLY, Lexer.OP_MOCNIT, Lexer.OP_FLOORDIVISION, Lexer.OP_REMAINDER)):
+			op = self.pop()[0]
+			rhs = self.parseE7()
+			lhs = BinaryOperator(lhs, rhs, op)
+		return lhs
+
+	def parseE7(self):
+		""" E7 ::= [ OP_SUBSTRACT ] F """
+		if (self.top()[0] == OP_SUBSTRACT):
+			op = self.pop()[0]
+			rhs = self.parseF()
+			lhs = BinaryOperator((number, 0, None), rhs, Lexer.OP_SUBSTRACT)
+		else:
+			lhs = self.parseF()
 		return lhs
 
 	def parseF(self):
@@ -145,9 +163,9 @@ class Parser:
 			variableName = self.pop()[1]
 			return VariableRead(variableName)
 		else:
-			self.pop(Lexer.OP_PAROPEN)
+			self.pop(Lexer.OP_PARENTHESES_LEFT)
 			result = self.parseExpression()
-			self.pop(Lexer.OP_PARCLOSE)
+			self.pop(Lexer.OP_PARENTHESES_RIGHT)
 			return result 
 
 	def parseIfStatement(self):
