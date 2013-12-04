@@ -72,41 +72,72 @@ class Parser:
 		""" ASSIGNMENT ::= ident op_assign EXPRESSION
 	   
 		Ulozeni hodnoty do promenne vypada tak, ze na leve strane je identifikator promenne, hned za nim je operator prirazeni a za nim je vyraz, ktery vypocitava hodnotu, kterou do promenne chci ulozit. Tohle je zjednodusena verze prirazeni, viz komentare k hodine. 
-	    """
+		"""
 		variableName = self.pop(Lexer.IDENT)[1]
 		self.pop(Lexer.OP_ASSIGN)
 		rhs = self.parseExpression()
 		return VariableWrite(variableName, rhs)
 
 	def parseExpression(self):
-		""" EXPRESSION ::= E2 { op_eq E2 }
+		""" EXPRESSION ::= E1 [ OP_ASSIGN E1 ]
 	   
-		Porovnani ma nejnizsi prioritu, a je binarni operator.
-	    """
-		lhs = self.parseE2()
-		while (self.top()[0] == Lexer.OP_EQ):
+		"""
+		lhs = self.parseE1()
+		while (self.top()[0] == Lexer.OP_ASSIGN):
 			self.pop()
+			rhs = self.parseE1()
+			lhs = BinaryOperator(lhs, rhs, Lexer.OP_ASSIGN)
+		return lhs
+
+	def parseE1(self):
+		""" E1 ::= E2 { OP_OR E2 }
+		"""
+		lhs = self.parseE2()
+		while (self.top()[0] == Lexer.OP_OR):
+			self.pop()[0]
 			rhs = self.parseE2()
-			lhs = BinaryOperator(lhs, rhs, Lexer.OP_EQ)
+			lhs = BinaryOperator(lhs, rhs, Lexer.OP_OR)
 		return lhs
 
 	def parseE2(self):
-		""" E2 ::= F { op_add | op_sub F }
-	   
+		""" E2 ::= E3 { OP_OR E3 }
+		"""
+		lhs = self.parseE3()
+		while (self.top()[0] == Lexer.OP_AND):
+			self.pop()[0]
+			rhs = self.parseE3()
+			lhs = BinaryOperator(lhs, rhs, Lexer.OP_AND)
+		return lhs
+
+	def parseE3(self):
+		""" E3 ::= E4 { ( OP_EQUAL | OP_NOTEQUAL ) E4 }
+	
 		Druhy level priorit je scitani a odcitani. Opet se jedna o binarni operatory. 
-	    """
-		lhs = self.parseF()
-		while (self.top()[0] in (Lexer.OP_ADD, Lexer.OP_SUB)):
+		"""
+		lhs = self.parseE4()
+		while (self.top()[0] in (Lexer.OP_EQUAL, Lexer.OP_NOTEQUAL)):
 			op = self.pop()[0]
-			rhs = self.parseE2()
+			rhs = self.parseE4()
+			lhs = BinaryOperator(lhs, rhs, op)
+		return lhs
+	
+	def parseE4(self):
+		""" E4 ::= E5 { ( OP_BIGGER | OP_SMALLER | OP_BIGGEROREQUAL | OP_SMALLEROREQUAL ) E5 }
+	
+		Druhy level priorit je scitani a odcitani. Opet se jedna o binarni operatory. 
+		"""
+		lhs = self.parseE4()
+		while (self.top()[0] in (Lexer.OP_EQUAL, Lexer.OP_NOTEQUAL)):
+			op = self.pop()[0]
+			rhs = self.parseE4()
 			lhs = BinaryOperator(lhs, rhs, op)
 		return lhs
 
 	def parseF(self):
 		""" F ::= number | ident | op_paropen EXPRESSION op_parclose
-	    
+		
 		Faktorem vyrazu pak je bud cislo (literal), nebo nazev promenne, v tomto pripade se vzdycky jedna o cteni promenne a nebo znova cely vyraz v zavorkach. 
-	    """
+		"""
 		if (self.top()[0] == Lexer.NUMBER):
 			value = self.pop()[1]
 			return Literal(value)
@@ -122,9 +153,9 @@ class Parser:
 	def parseIfStatement(self):
 		""" 
 		CONDITION ::= KW_IF '(' E ')' BLOCK { KW_ELIF '(' E ')' BLOCK } [ KW_ELSE BLOCK ]
-	   
-	    If podminka je klasicky podminka a za ni if, pripadne else block.
-	    """
+	
+		If podminka je klasicky podminka a za ni if, pripadne else block.
+		"""
 		self.pop(Lexer.KW_IF)
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		condition = self.parseExpression()
