@@ -152,16 +152,17 @@ class Parser:
 		return lhs
 
 	def parseF(self):
-		""" F ::= number | ident | op_paropen EXPRESSION op_parclose
+		""" F ::= number | ident [ OP_BRACKETS_LEFT E OP_BRACKETS_RIGHT ] | FCALL | OP_PARENTHESES_LEFT E OP_PARENTHESES_RIGHT| FIELD
 		
 		Faktorem vyrazu pak je bud cislo (literal), nebo nazev promenne, v tomto pripade se vzdycky jedna o cteni promenne a nebo znova cely vyraz v zavorkach. 
 		"""
 		if (self.top()[0] == Lexer.NUMBER):
 			value = self.pop()[1]
 			return Literal(value)
-		elif (self.top()[0] == Lexer.IDENT):
+		elif (self.top()[0] == Lexer.IDENT) and (self.top()[1] != Lexer.OP_BRACKETS_LEFT):
 			variableName = self.pop()[1]
 			return VariableRead(variableName)
+		elif (self.top()[0] == Lexer.IDENT) and (self.top()[1] == Lexer.OP_BRACKETS_LEFT):
 		else:
 			self.pop(Lexer.OP_PARENTHESES_LEFT)
 			result = self.parseExpression()
