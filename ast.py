@@ -104,7 +104,7 @@ class For:
 	def __str__(self):
 		return "for (%s) in %s %s" % (self.variable, self.array, self.block)
 
-class Function:
+class FunctionWrite:
 	"""pamatuje si jméno funkce, parametry a blok
 	KW_FUNCTION OP_ASSING ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT BLOCK
 	"""
@@ -128,6 +128,32 @@ class Function:
 			a += ") " + self.block
 			return a
 
+class FunctionCall:
+	def __init__(self, name, arrgs):
+		self.name = name
+		self.arrgs = arrgs
+		self.block = block
+
+	def __str__(self):
+		if (self.arrgs == []):
+			return " %s () %s" % (self.name, self.block)
+		else:
+			a = "%s ("
+			x=1
+			for y in self.arrgs:
+				if x == 1:
+					a += y
+				else:
+					a += ", "+ y
+			a += ") "
+			return a
+
+class ArrgIdent:
+	def __init__(self,name):
+		self.name = name
+
+	def __str__(self):
+		return self.name
 
 
 

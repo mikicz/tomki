@@ -3,17 +3,7 @@ from ast import *
 from lexer import Lexer
 
 class Parser:
-	""" Jednoduchy priklad parseru. Naparsuje nasledujici gramatiku:
-
-	PROGRAM ::= { STATEMENT }
-	STATEMENT ::= IF_STATEMENT | ASSIGNMENT
-	ASSIGNMENT ::= ident op_assign EXPRESSION
-	EXPRESSION ::= E2 { op_eq E2 }
-	E2 ::= F { op_add | op_sub F }
-	F ::= number | ident | op_paropen EXPRESSION op_parclose
-	IF_STATEMENT ::= if op_paropen EXPRESSION op_parclose [ BLOCK ] [ else BLOCK ]
-	BLOCK ::= op_braceopen { STATEMENT } op_braceclose
-
+	"""
 	Ten parser se trosku lisi od toho parseru, ktery jsme delali na hodine, protoze uz pouziva ty jednoduzsi stromy, o kterych jsem mluvil. Takze misto toho, aby kazde pravidlo melo svoji vlasti tridu (v ast), tak ty tridy pro ten strom odpovidaji spis tomu, co ten program bude delat, nez tomu, jak je napsana gramatika. Blizsi popisky viz jednotlive parsovaci metody nize.
 	"""
 
@@ -37,6 +27,7 @@ class Parser:
 
 	def top(self, i = 0):
 		""" Abych nemusel tolik psat, provede top() z lexeru. 
+		Může se zeptat na token + i
 		"""
 		return self.lexer.topToken(i)
 
@@ -64,7 +55,9 @@ class Parser:
 		elif (self.top()[0] == Lexer.KW_FOR): #for
 			return self.parseFor()
 		elif (self.top()[0] == Lexer.KW_FUNCTION): #funkce
-			return self.parseFunction
+			return self.parseFunction()
+		elif (self.top()[0] == Lexer.OP_BRACES_LEFT):
+			return self.parseBlock()
 		else:
 			return self.parseAssignment()
 
@@ -79,70 +72,61 @@ class Parser:
 		return VariableWrite(variableName, rhs)
 
 	def parseExpression(self):
-		""" EXPRESSION ::= E1 [ OP_ASSIGN E1 ] """
+		""" E0 ::= E1 { OP_OR E1 } """
 		lhs = self.parseE1()
-		while (self.top()[0] == Lexer.OP_ASSIGN):
-			self.pop()
-			rhs = self.parseE1()
-			lhs = BinaryOperator(lhs, rhs, Lexer.OP_ASSIGN)
-		return lhs
-
-	def parseE1(self):
-		""" E1 ::= E2 { OP_OR E2 } """
-		lhs = self.parseE2()
 		while (self.top()[0] == Lexer.OP_OR):
 			self.pop()[0]
-			rhs = self.parseE2()
+			rhs = self.parseE1()
 			lhs = BinaryOperator(lhs, rhs, Lexer.OP_OR)
-		return lhs
+		return lhs		
 
-	def parseE2(self):
-		""" E2 ::= E3 { OP_OR E3 } """
-		lhs = self.parseE3()
+	def parseE1(self):
+		""" E1 ::= E2 { OP_AND E2 } """
+		lhs = self.parseE2()
 		while (self.top()[0] == Lexer.OP_AND):
 			self.pop()[0]
-			rhs = self.parseE3()
+			rhs = self.parseE2()
 			lhs = BinaryOperator(lhs, rhs, Lexer.OP_AND)
 		return lhs
 
-	def parseE3(self):
-		""" E3 ::= E4 { ( OP_EQUAL | OP_NOTEQUAL ) E4 } """
-		lhs = self.parseE4()
+	def parseE2(self):
+		""" E2 ::= E3 { ( OP_EQUAL | OP_NOTEQUAL ) E3 } """
+		lhs = self.parseE3()
 		while (self.top()[0] in (Lexer.OP_EQUAL, Lexer.OP_NOTEQUAL)):
+			op = self.pop()[0]
+			rhs = self.parseE3()
+			lhs = BinaryOperator(lhs, rhs, op)
+		return lhs
+	
+	def parseE3(self):
+		""" E3 ::= E4 { ( OP_BIGGER | OP_SMALLER | OP_BIGGEROREQUAL | OP_SMALLEROREQUAL ) E4 } """
+		lhs = self.parseE4()
+		while (self.top()[0] in (Lexer.OP_BIGGER, Lexer.OP_SMALLER, Lexer.OP_BIGGEROREQUAL, Lexer.OP_SMALLEROREQUAL)):
 			op = self.pop()[0]
 			rhs = self.parseE4()
 			lhs = BinaryOperator(lhs, rhs, op)
 		return lhs
-	
+
 	def parseE4(self):
-		""" E4 ::= E5 { ( OP_BIGGER | OP_SMALLER | OP_BIGGEROREQUAL | OP_SMALLEROREQUAL ) E5 } """
+		""" E4 ::= E5 { ( OP_ADD | OP_SUBSTRACT ) E5 } """
 		lhs = self.parseE5()
-		while (self.top()[0] in (Lexer.OP_BIGGER, Lexer.OP_SMALLER, Lexer.OP_BIGGEROREQUAL, Lexer.OP_SMALLEROREQUAL)):
+		while (self.top()[0] in (Lexer.OP_ADD, Lexer.OP_SUBSTRACT)):
 			op = self.pop()[0]
 			rhs = self.parseE5()
 			lhs = BinaryOperator(lhs, rhs, op)
 		return lhs
 
 	def parseE5(self):
-		""" E5 ::= E6 { ( OP_ADD | OP_SUBSTRACT ) E6 } """
+		""" E5 ::= E6 { ( OP_MULTIPLY | OP_MOCNIT | OP_FLOORDIVISION | OP_REMAINDER ) E6 } """
 		lhs = self.parseE6()
-		while (self.top()[0] in (Lexer.OP_ADD, Lexer.OP_SUBSTRACT)):
+		while (self.top()[0] in (Lexer.OP_MULTIPLY, Lexer.OP_MOCNIT, Lexer.OP_FLOORDIVISION, Lexer.OP_REMAINDER)):
 			op = self.pop()[0]
 			rhs = self.parseE6()
 			lhs = BinaryOperator(lhs, rhs, op)
 		return lhs
 
 	def parseE6(self):
-		""" E6 ::= E7 { ( OP_MULTIPLY | OP_MOCNIT | OP_FLOORDIVISION | OP_REMAINDER ) E7 } """
-		lhs = self.parseE7()
-		while (self.top()[0] in (Lexer.OP_MULTIPLY, Lexer.OP_MOCNIT, Lexer.OP_FLOORDIVISION, Lexer.OP_REMAINDER)):
-			op = self.pop()[0]
-			rhs = self.parseE7()
-			lhs = BinaryOperator(lhs, rhs, op)
-		return lhs
-
-	def parseE7(self):
-		""" E7 ::= [ OP_SUBSTRACT ] F """
+		""" E6 ::= [ OP_SUBSTRACT ] F """
 		if (self.top()[0] == OP_SUBSTRACT):
 			op = self.pop()[0]
 			rhs = self.parseF()
@@ -173,7 +157,7 @@ class Parser:
 		""" 
 		CONDITION ::= KW_IF '(' E ')' BLOCK { KW_ELIF '(' E ')' BLOCK } [ KW_ELSE BLOCK ]
 	
-		If podminka je klasicky podminka a za ni if, pripadne else block.
+		If podminka je klasicky podminka a za ni block, nekonečný počet elifů, pak pripadne else block.
 		"""
 		self.pop(Lexer.KW_IF)
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
@@ -221,11 +205,11 @@ class Parser:
 		var = self. # ident
 		self.pop(Lexer.KW_In)
 		if ( self.top()[0] == Lexer.IDENT and self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT ):
-			array = self. #function call
+			array = self.parseFunctionCall() #function call
 		elif ( self.top()[0] == Lexer.IDENT ):
-			array = self. # ident
+			array = VariableRead(self.pop(Lexer.IDENT)[1])
 		elif ( self.top()[0] == Lexer.OP_BRACKETS_LEFT ):
-			array = self. # pole
+			array = self.parseField()
 		block = self.parseBlock()
 		return For(var,array,block)
 
@@ -240,3 +224,29 @@ class Parser:
 			result.add(self.parseStatement())
 		self.pop(Lexer.OP_BRACECLOSE)
 		return result
+
+	def parseFunctionCall(self):
+		""" FCALL ::= ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT """
+		functionName=self.pop(Lexer.IDENT)
+		self.pop(OP_PARENTHESES_LEFT)
+		arrgs=[]
+		while(): #tohle se ještě musí dořešit
+			arrgs.append(arg)
+		self.pop(OP_PARENTHESES_RIGHT)
+		return FunctionCall(functionName,arrgs)
+
+	def parseFunction(self):
+		""" FDEF :== KW_FUNCTION ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT BLOCK """
+		functionName=self.pop(Lexer.IDENT)
+		self.pop(OP_PARENTHESES_LEFT)
+		arrgs=[]
+		while(self.top()[0] == Lexer.IDENT): #tohle se ještě musí dořešit
+			arrgs.append(ArrgIdent(self.pop(Lexer.IDENT)[1]))
+			if self.top()[0] == Lexer.OP_COMMA:
+				self.pop(Lexer.OP_COMMA)
+
+		self.pop(OP_PARENTHESES_RIGHT)
+		block = self.parseBlock()
+		return FunctionWrite(functionName, arrgs, block)
+
+
