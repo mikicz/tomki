@@ -114,7 +114,7 @@ class Function:
 		self.arrgs = arrgs
 		self.block = block
 
-	def __init__(self):
+	def __str__(self):
 		if (self.arrgs == []):
 			return "function = %s () %s" % (self.name, self.block)
 		else:
