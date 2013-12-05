@@ -39,6 +39,9 @@ class VariableRead:
 	def __str__(self):
 		return self.variableName
 
+	def run(self,frame):
+		return frame.get(self.name)
+
 class VariableWrite:
 	""" Zapis hodnoty do promenne. Krom nazvu promenne si pamatuje i vyraz, kterym se vypocita hodnota. """
 	def __init__(self, variableName, value):
@@ -47,6 +50,9 @@ class VariableWrite:
 
 	def __str__(self):
 		return "%s = %s" % (self.variableName, self.value)
+
+	def run(self,frame):
+		return frame.set(self.VariableName,self.value.run(frame))
 
 class Literal:
 	""" Literal (tedy jakakoli konstanta, cislo). """
