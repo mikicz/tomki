@@ -242,7 +242,7 @@ class Parser:
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		arrgs=[]
 		while(self.top()[0] != Lexer.OP_PARENTHESES_RIGHT): 
-			arrgs.append(self.parseE4())
+			arrgs.append(self.parseExpression())
 			if self.top()[0] == Lexer.OP_COMMA:
 				self.pop(Lexer.OP_COMMA)
 		self.pop(Lexer.OP_PARENTHESES_RIGHT)
@@ -265,9 +265,10 @@ class Parser:
 	def parseField(self):
 		self.pop(OP_BRACKETS_LEFT)
 		polozkypole = []
-		while(self.top()[0] != OP_BRACKETS_RIGHT):
-			polozkypole.append(self.parseE4())
-		self.pop(OP_BRACKETS_RIGHT)
+		while(self.top()[0] != Lexer.OP_BRACKETS_RIGHT):
+			polozkypole.append(self.parseExpression())
+			self.pop(Lexer.OP_COMMA)
+		self.pop(OP_BRACKETS_RIGHT)  #For every upvote this gets I will stroke me penis once. Let's wear the skin off! 
 		return Field(polozkypole)
 
 
