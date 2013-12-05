@@ -155,7 +155,7 @@ class ArrgIdent:
 	def __str__(self):
 		return self.name
 
-class Field:
+class Array:
 	def __init__(self,polozkypole):
 		self.polozkypole = polozkypole
 

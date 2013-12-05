@@ -32,7 +32,7 @@ class Lexer:
 
 	#operace
 	OP_ADD = "+" # operator scitani
-	OP_EQ = "==" # operator porovnani
+	OP_EQUAL = "==" # operator porovnani
 	OP_ASSIGN = "=" # operator prirazeni
 	OP_SUBSTRACT = "-" # operátor mínus
 	OP_MULTIPLY = "*" # operátor násobení
@@ -47,7 +47,7 @@ class Lexer:
 	OP_BIGGER = ">"
 	OP_SMALLER = "<"
 	OP_BIGGEROREQUAL = ">="
-	OP_SMALLERORERUAL = "<="
+	OP_SMALLEROREQUAL = "<="
 	OP_PARENTHESES_LEFT = "("
 	OP_PARENTHESES_RIGHT = ")"
 	OP_BRACES_LEFT = "{"
@@ -129,7 +129,7 @@ class Lexer:
 	def popToken(self, value=None):
 		""" Posune se na dalsi token. Vysvetlime priste. """
 		t = self.topToken()
-		if (self._top < len(self._tokens) and (value=None or value=t[0])):
+		if (self._top < len(self._tokens) and (value == None or value == t[0])):
 			self._top += 1
 		else:
 			self.error("Očekáván jiný typ tokenu")
@@ -294,7 +294,7 @@ class Lexer:
 			c = self.topChar()
 			if (c == '='):
 				self.popChar()
-				self.addToken(Lexer.OP_EQ, None, self.currentline)
+				self.addToken(Lexer.OP_EQUAL, None, self.currentline)
 			else:
 				self.addToken(Lexer.OP_ASSIGN, None, self.currentline)
 
@@ -419,11 +419,12 @@ class Lexer:
 		else:
 			self.error("Neznamy znak na vstupu! Znak: "+c)
 
-
+"""
 # Tohle je ukazka pouziti a testovani
 l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
-string = """ pokus Test $b10110
-"""
+string = pokus Test $b10110 
+
 l.analyzeString(string) # timhle mu reknete, aby naparsoval string, ktery jste napsali
 while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
 	print(l.popToken())
+"""

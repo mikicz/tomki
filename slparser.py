@@ -23,7 +23,7 @@ class Parser:
 		if (t[0] == type):
 			return self.lexer.popToken()
 		else:
-			raise SyntaxError("Ocekavany token " + type + " neni na vstupu (" + t[0] + " misto nej)")
+			raise SyntaxError("Ocekavany token " + type + " neni na vstupu (" + str(t[0]) + " misto nej)")
 
 	def top(self, i = 0):
 		""" Abych nemusel tolik psat, provede top() z lexeru. 
@@ -127,8 +127,8 @@ class Parser:
 
 	def parseE6(self):
 		""" E6 ::= [ OP_SUBSTRACT ] F """
-		if (self.top()[0] == OP_SUBSTRACT):
-			op = self.pop()[0]
+		if (self.top()[0] == Lexer.OP_SUBSTRACT):
+			self.pop(Lexer.OP_SUBSTRACT)[0]
 			rhs = self.parseF()
 			lhs = BinaryOperator((number, 0, None), rhs, Lexer.OP_SUBSTRACT)
 		else:
@@ -156,7 +156,7 @@ class Parser:
 			return self.parseFunctionCall
 
 		elif (self.top()[0] == Lexer.OP_BRACKETS_LEFT):
-			return parseField()
+			return parseArray()
 
 		else:
 			self.pop(Lexer.OP_PARENTHESES_LEFT)
@@ -177,7 +177,7 @@ class Parser:
 		trueCase = self.parseBlock()
 
 		elifs = []
-		while (self.top[0] == Lexer.KW_ELIF):
+		while (self.top()[0] == Lexer.KW_ELIF):
 			self.pop()
 			self.pop(Lexer.OP_PARENTHESES_LEFT)
 			x = self.parseExpression() #podmínka 
@@ -213,14 +213,14 @@ class Parser:
 		"""
 
 		self.pop(Lexer.KW_FOR)
-		var = self. # ident
+		var = self.parseF()
 		self.pop(Lexer.KW_In)
 		if ( self.top()[0] == Lexer.IDENT and self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT ):
 			array = self.parseFunctionCall() #function call
 		elif ( self.top()[0] == Lexer.IDENT ):
 			array = VariableRead(self.pop(Lexer.IDENT)[1])
 		elif ( self.top()[0] == Lexer.OP_BRACKETS_LEFT ):
-			array = self.parseField()
+			array = self.parseArray()
 		block = self.parseBlock()
 		return For(var,array,block)
 
@@ -229,11 +229,11 @@ class Parser:
 
 		Blok je podobny programu, proste nekolik prikazu za sebou. 
 		"""
-		self.pop(Lexer.OP_BRACEOPEN)
+		self.pop(Lexer.OP_BRACES_LEFT)
 		result = Block()
-		while (self.top()[0] != Lexer.OP_BRACECLOSE):
+		while (self.top()[0] != Lexer.OP_BRACES_RIGHT):
 			result.add(self.parseStatement())
-		self.pop(Lexer.OP_BRACECLOSE)
+		self.pop(Lexer.OP_BRACES_RIGHT)
 		return result
 
 	def parseFunctionCall(self):
@@ -262,13 +262,13 @@ class Parser:
 		block = self.parseBlock()
 		return FunctionWrite(functionName, arrgs, block)
 
-	def parseField(self):
+	def parseArray(self):
 		self.pop(OP_BRACKETS_LEFT)
 		polozkypole = []
 		while(self.top()[0] != Lexer.OP_BRACKETS_RIGHT):
 			polozkypole.append(self.parseExpression())
 			self.pop(Lexer.OP_COMMA)
 		self.pop(OP_BRACKETS_RIGHT)  #For every upvote this gets I will stroke me penis once. Let's wear the skin off! 
-		return Field(polozkypole)
+		return Array(polozkypole)
 
 
