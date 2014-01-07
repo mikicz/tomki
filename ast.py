@@ -31,11 +31,15 @@ class Block:
 		self.code.append(node)
 
 	def __str__(self):
-		result = "{"
+		self.result = "{"
 		for node in self.code:
-			result = result + "\n" + node.__str__()
-		result = result + "\n}\n"
-		return result		 
+			self.result = self.result + "\n" + node.__str__()
+		self.result = self.result + "\n}\n"
+		return self.result
+
+	def run(self, frame):
+		for prikaz in self.code:
+			prikaz.run()	 
 
 class BinaryOperator:
 	""" Binary operator. 
@@ -145,7 +149,7 @@ class If:
 				a += " elif ("+x[0]+") " + x[1]
 			a+= " else " + self.falseCase
 		return a
-	def run:
+	def run(self, frame):
 		self.istrue = 0
 		if self.condition.run() == True:
 			self.istrue = 1
@@ -154,7 +158,7 @@ class If:
 			if i[0] == True:
 				self.istrue = 1
 				i[1].run()
-		if self.istrue=0:
+		if self.istrue==0:
 			self.falseCase.run()
 
 
@@ -171,6 +175,9 @@ class While:
 
 	def __str__(self):
 		return "while (%s) %s" % (self.condition, self.block)
+	def run(self, frame):
+		while self.condition.run == True:
+			self.block.run()
 
 class For:
 	""" pamatuje si kam se má ukládat jednotlivý prvek seznamu, seznam a block

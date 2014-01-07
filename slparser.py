@@ -41,6 +41,7 @@ class Parser:
 		program = Block()
 		while (self.top()[0] != Lexer.EOF):
 			program.add(self.parseStatement())
+			self.pop()
 		return program
 
 	def parseStatement(self):
