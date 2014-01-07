@@ -145,6 +145,19 @@ class If:
 				a += " elif ("+x[0]+") " + x[1]
 			a+= " else " + self.falseCase
 		return a
+	def run:
+		self.istrue = 0
+		if self.condition.run() == True:
+			self.istrue = 1
+			self.trueCase.run()
+		for i in self.elifs:
+			if i[0] == True:
+				self.istrue = 1
+				i[1].run()
+		if self.istrue=0:
+			self.elifs.run()
+
+
 
 
 class While:
