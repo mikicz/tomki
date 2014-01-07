@@ -155,7 +155,7 @@ class If:
 				self.istrue = 1
 				i[1].run()
 		if self.istrue=0:
-			self.elifs.run()
+			self.falseCase.run()
 
 
 
