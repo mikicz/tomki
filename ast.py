@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from math import floor
+from lexer import Lexer
 class Frame:
 
 	def __init__(self,parent):
@@ -39,7 +40,7 @@ class Block:
 
 	def run(self, frame):
 		for prikaz in self.code:
-			prikaz.run()	 
+			prikaz.run(frame)	 
 
 class BinaryOperator:
 	""" Binary operator. 
@@ -53,44 +54,45 @@ class BinaryOperator:
 	def __str__(self):
 		return "( %s %s %s)" % (self.left, self.operator, self.right)
 	def run(self, frame):
-		l = self.left.run()
-		r = self.right.run() #hodil by se check jestli to jsou čísla (pro některý operace to holt bez čísel nejde)
+		Lex = Lexer()
+		l = self.left.run(frame)
+		r = self.right.run(frame) #hodil by se check jestli to jsou čísla (pro některý operace to holt bez čísel nejde)
 
-		if self.operator == Lexer.OP_OR:
+		if self.operator == Lex.OP_OR:
 			if l == True or r == True:
 				return True
 			else:
 				return False
-		elif self.operator == Lexer.OP_AND:
+		elif self.operator == Lex.OP_AND:
 			if l == True and r == True:
 				return True
 			else:
 				return False
-		elif self.operator == Lexer.OP_EQUAL:
+		elif self.operator == Lex.OP_EQUAL:
 			return l==r
-		elif self.operator == Lexer.OP_NOTEQUAL:
+		elif self.operator == Lex.OP_NOTEQUAL:
 			return l!=r
-		elif self.operator == Lexer.OP_BIGGER:
+		elif self.operator == Lex.OP_BIGGER:
 			return l>r
-		elif self.operator == Lexer.OP_BIGGEROREQUAL:
+		elif self.operator == Lex.OP_BIGGEROREQUAL:
 			return l>=r
-		elif self.operator == Lexer.OP_SMALLER:
+		elif self.operator == Lex.OP_SMALLER:
 			return l<r
-		elif self.operator == Lexer.OP_SMALLEROREQUAL:
+		elif self.operator == Lex.OP_SMALLEROREQUAL:
 			return l<=r
-		elif self.operator == Lexer.OP_ADD:
+		elif self.operator == Lex.OP_ADD:
 			return l+r
-		elif self.operator == Lexer.OP_SUBSTRACT:
+		elif self.operator == Lex.OP_SUBSTRACT:
 			return l-r
-		elif self.operator == Lexer.OP_MULTIPLY:
+		elif self.operator == Lex.OP_MULTIPLY:
 			return l*r
-		elif self.operator == Lexer.OP_MOCNIT:
+		elif self.operator == Lex.OP_MOCNIT:
 			return l**r
-		elif self.operator == Lexer.OP_DIVIDE:
+		elif self.operator == Lex.OP_DIVIDE:
 			return l/r
-		elif self.operator == Lexer.OP_FLOORDIVISION:
+		elif self.operator == Lex.OP_FLOORDIVISION:
 			return floor(l/r)
-		elif self.operator == Lexer.OP_REMAINDER:
+		elif self.operator == Lex.OP_REMAINDER:
 			return l%r
 
 
@@ -115,7 +117,7 @@ class VariableWrite:
 		return "%s = %s" % (self.variableName, self.value)
 
 	def run(self,frame):
-		return frame.set(self.VariableName,self.value.run(frame))
+		return frame.set(self.variableName,self.value.run(frame))
 
 class Literal:
 	""" Literal (tedy jakakoli konstanta, cislo). """
@@ -151,15 +153,15 @@ class If:
 		return a
 	def run(self, frame):
 		self.istrue = 0
-		if self.condition.run() == True:
+		if self.condition.run(frame) == True:
 			self.istrue = 1
-			self.trueCase.run()
+			self.trueCase.run(frame)
 		for i in self.elifs:
 			if i[0] == True:
 				self.istrue = 1
-				i[1].run()
+				i[1].run(frame)
 		if self.istrue==0:
-			self.falseCase.run()
+			self.falseCase.run(frame)
 
 
 
@@ -177,7 +179,7 @@ class While:
 		return "while (%s) %s" % (self.condition, self.block)
 	def run(self, frame):
 		while self.condition.run == True:
-			self.block.run()
+			self.block.run(frame)
 
 class For:
 	""" pamatuje si kam se má ukládat jednotlivý prvek seznamu, seznam a block

@@ -1,4 +1,5 @@
 from lexer import Lexer
+from frame import Frame
 # jmenuje se slparser (Simple Language Parser), aby se netriskal s pythonim modulem parser
 from slparser import Parser
 
@@ -18,7 +19,8 @@ def testParser():
 	p = Parser(l) # zalozim si parser a dam mu lexer ze ktereho bude cist tokeny
 	ast = p.parse() # naparsuju co mam v lexeru a vratim AST 
 	print(ast) # zobrazim ten strom
-	ast.run()
+	frame = Frame(None)
+	ast.run(frame)
 
 
 
