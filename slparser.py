@@ -117,9 +117,9 @@ class Parser:
 		return lhs
 
 	def parseE5(self):
-		""" E5 ::= E6 { ( OP_MULTIPLY | OP_MOCNIT | OP_FLOORDIVISION | OP_REMAINDER ) E6 } """
+		""" E5 ::= E6 { ( OP_MULTIPLY | OP_MOCNIT | OP_DIVIDE | OP_FLOORDIVISION | OP_REMAINDER ) E6 } """
 		lhs = self.parseE6()
-		while (self.top()[0] in (Lexer.OP_MULTIPLY, Lexer.OP_MOCNIT, Lexer.OP_FLOORDIVISION, Lexer.OP_REMAINDER)):
+		while (self.top()[0] in (Lexer.OP_MULTIPLY, Lexer.OP_MOCNIT, Lexer.OP_DIVIDE, Lexer.OP_FLOORDIVISION, Lexer.OP_REMAINDER)):
 			op = self.pop()[0]
 			rhs = self.parseE6()
 			lhs = BinaryOperator(lhs, rhs, op)

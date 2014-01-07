@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from math import floor
 class Frame:
 
 	def __init__(self,parent):
@@ -15,7 +16,6 @@ class Frame:
 			pass
 			#vyhoď error
 		return self.parent.get(self.name)
-
 
 class Block:
 	""" Blok prikazu. 
@@ -48,6 +48,47 @@ class BinaryOperator:
 	
 	def __str__(self):
 		return "( %s %s %s)" % (self.left, self.operator, self.right)
+	def run(self, frame):
+		l = self.left.run()
+		r = self.right.run() #hodil by se check jestli to jsou čísla (pro některý operace to holt bez čísel nejde)
+
+		if self.operator == Lexer.OP_OR:
+			if l == True or r == True:
+				return True
+			else:
+				return False
+		elif self.operator == Lexer.OP_AND:
+			if l == True and r == True:
+				return True
+			else:
+				return False
+		elif self.operator == Lexer.OP_EQUAL:
+			return l==r
+		elif self.operator == Lexer.OP_NOTEQUAL:
+			return l!=r
+		elif self.operator == Lexer.OP_BIGGER:
+			return l>r
+		elif self.operator == Lexer.OP_BIGGEROREQUAL:
+			return l>=r
+		elif self.operator == Lexer.OP_SMALLER:
+			return l<r
+		elif self.operator == Lexer.OP_SMALLEROREQUAL:
+			return l<=r
+		elif self.operator == Lexer.OP_ADD:
+			return l+r
+		elif self.operator == Lexer.OP_SUBSTRACT:
+			return l-r
+		elif self.operator == Lexer.OP_MULTIPLY:
+			return l*r
+		elif self.operator == Lexer.OP_MOCNIT:
+			return l**r
+		elif self.operator == Lexer.OP_DIVIDE:
+			return l/r
+		elif self.operator == Lexer.OP_FLOORDIVISION:
+			return floor(l/r)
+		elif self.operator == Lexer.OP_REMAINDER:
+			return l%r
+
 
 class VariableRead:
 	""" Cteni hodnoty ulozene v promenne. """
@@ -78,6 +119,9 @@ class Literal:
 		self.value = str(value)
 
 	def __str__(self):
+		return self.value
+
+	def run(self, frame):
 		return self.value
 
 class If:
