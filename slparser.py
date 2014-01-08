@@ -236,6 +236,8 @@ class Parser:
 		result = Block()
 		while (self.top()[0] != Lexer.OP_BRACES_RIGHT):
 			result.add(self.parseStatement())
+			if self.top()[0] == Lexer.OP_SEMICOLON:
+				self.pop(Lexer.OP_SEMICOLON)
 		self.pop(Lexer.OP_BRACES_RIGHT)
 		return result
 

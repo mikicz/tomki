@@ -16,6 +16,9 @@ Lex.analyzeString(str)
 
 Par = Parser(Lex)
 AST = Par.parse()
+print AST
 
 frame = Frame(None)
 AST.run(frame)
+
+print frame.locals
