@@ -59,6 +59,8 @@ class Parser:
 			return self.parseFunction()
 		elif (self.top()[0] == Lexer.OP_BRACES_LEFT):
 			return self.parseBlock()
+		elif (self.top()[0] == Lexer.KW_PRINT):
+			return self.parsePrint()
 		else:
 			return self.parseAssignment()
 
@@ -264,12 +266,19 @@ class Parser:
 		return FunctionWrite(functionName, arrgs, block)
 
 	def parseArray(self):
-		self.pop(OP_BRACKETS_LEFT)
+		self.pop(Lexer.OP_BRACKETS_LEFT)
 		polozkypole = []
 		while(self.top()[0] != Lexer.OP_BRACKETS_RIGHT):
 			polozkypole.append(self.parseExpression())
 			self.pop(Lexer.OP_COMMA)
 		self.pop(OP_BRACKETS_RIGHT)  #For every upvote this gets I will stroke me penis once. Let's wear the skin off! 
 		return Array(polozkypole)
+
+	def parsePrint(self):
+		self.pop(Lexer.KW_PRINT)
+		self.pop(Lexer.OP_PARENTHESES_LEFT)
+		x = self.parseExpression()
+		self.pop(Lexer.OP_PARENTHESES_RIGHT)
+		return Print(x)
 
 

@@ -141,7 +141,7 @@ class BinaryOperator:
 				else:
 					return float(l) - float(r)
 			else:
-				raise ParserError("Nemůžeš odečíst dva stringy nebo string s číslem")
+				raise ("Nemůžeš odečíst dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_MULTIPLY:
 			if ( self.isfloat(l) and self.isfloat(r) ):
@@ -150,7 +150,7 @@ class BinaryOperator:
 				else:
 					return float(l) * float(r)
 			else:
-				raise ParserError("Nemůžeš násobit dva stringy nebo string s číslem")
+				raise ("Nemůžeš násobit dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_MOCNIT:
 			if ( self.isfloat(l) and self.isfloat(r) ):
@@ -159,7 +159,7 @@ class BinaryOperator:
 				else:
 					return float(l) ** float(r)
 			else:
-				raise ParserError("Nemůžeš mocnit dva stringy nebo string s číslem")
+				raise ("Nemůžeš mocnit dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_DIVIDE:
 			if ( self.isfloat(l) and self.isfloat(r) ):
@@ -168,7 +168,7 @@ class BinaryOperator:
 				else:
 					return float(l) / float(r)
 			else:
-				raise ParserError("Nemůžeš dělit dva stringy nebo string s číslem")
+				raise ("Nemůžeš dělit dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_FLOORDIVISION:
 			if ( self.isfloat(l) and self.isfloat(r) ):
@@ -177,7 +177,7 @@ class BinaryOperator:
 				else:
 					return floor( float(l) / float(r) )
 			else:
-				raise ParserError("Nemůžeš dělit dva stringy nebo string s číslem")
+				raise ("Nemůžeš dělit dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_REMAINDER:
 			if ( self.isfloat(l) and self.isfloat(r) ):
@@ -186,7 +186,7 @@ class BinaryOperator:
 				else:
 					return floor( float(l) % float(r) )
 			else:
-				raise ParserError("Nemůžeš dělit dva stringy nebo string s číslem")
+				raise ("Nemůžeš dělit dva stringy nebo string s číslem")
 
 	def isint(self,x): #vyzkouší jestli to jde převést na int, vrátí True nebo False
 		try:
@@ -371,7 +371,14 @@ class Array:
 		a += "]"
 		return a
 
+class Print:
+	def __init__(self,what):
+		self.what = what
 
+	def __str__(self):
+		return "print ( %s )" % (self.what)
 
+	def run(self, frame):
+		print self.what.run(frame)
 
 

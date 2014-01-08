@@ -29,6 +29,7 @@ class Lexer:
 	KW_CONTINUE = "continue"
 	KW_RETURN = "return"
 	KW_FUNCTION = "function"
+	KW_PRINT = "print"
 
 	#operace
 	OP_ADD = "+" # operator scitani
@@ -79,6 +80,7 @@ class Lexer:
 		self._keywords["continue"] = Lexer.KW_CONTINUE
 		self._keywords["return"] = Lexer.KW_RETURN
 		self._keywords["function"] = Lexer.KW_FUNCTION
+		self._keywords["print"] = Lexer.KW_PRINT
 
 		self._keywords["and"] = Lexer.OP_AND
 		self._keywords["or"] = Lexer.OP_OR
