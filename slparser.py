@@ -23,7 +23,7 @@ class Parser:
 		if (t[0] == type):
 			return self.lexer.popToken()
 		else:
-			raise SyntaxError("Ocekavany token " + type + " neni na vstupu (" + str(t[0]) + " misto nej)")
+			raise SyntaxError("Ocekavany token " + type + " neni na vstupu " + str(t[0]) + " misto nej)")
 
 	def top(self, i = 0):
 		""" Abych nemusel tolik psat, provede top() z lexeru. 

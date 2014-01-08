@@ -12,7 +12,7 @@ def testLexer():
 		print(l.popToken())
 
 def testParser():
-	s = "x = 2;print ( x )"
+	s = "x = 0;while (x <10) {x = x+1} ;print (x);"
 	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
 	l.analyzeString(s) # timhle mu reknete, aby naparsoval string, ktery jste napsali
 	p = Parser(l) # zalozim si parser a dam mu lexer ze ktereho bude cist tokeny
