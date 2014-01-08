@@ -43,7 +43,7 @@ class Lexer:
 	OP_AND = "and" # a to: and AND &
 	OP_OR = "or" # a to: or OR 
 	OP_NOT = "not" # a to: not NOT
-	OP_NOTEQUAL = "<>"
+	OP_NOTEQUAL = "<>" # nebo i !=
 	OP_BIGGER = ">"
 	OP_SMALLER = "<"
 	OP_BIGGEROREQUAL = ">="
@@ -339,7 +339,12 @@ class Lexer:
 
 		elif (c == "!"):
 			self.popChar()
-			self.addToken(Lexer.OP_NOT, None, self.currentline)
+			c = self.topChar()
+			if (c == '='):
+				self.popChar()
+				self.addToken(Lexer.OP_NOTEQUAL, None, self.currentline)
+			else:
+				self.addToken(Lexer.OP_NOT, None, self.currentline)
 
 		elif (c == "%"):
 			self.popChar()
