@@ -39,7 +39,7 @@ class Parser:
 		Z hlediska stromu (ast) je program tedy blok prikazu, postupne jak prikazy parsuju tak je pridavam do toho bloku. Kdyz zjistim, ze uz na vstupu zadny token nemam, tak jsem skoncil.
 		"""
 		program = Block()
-		while (self.top()[0] != Lexer.EOF):
+		while (self.top()[0] != Lexer._EOF):
 			program.add(self.parseStatement())
 			self.pop()
 		return program

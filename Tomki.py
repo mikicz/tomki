@@ -5,6 +5,7 @@ from lexer import Lexer
 from slparser import Parser
 from ast import *
 
+
 filename = str(sys.argv[1])
 file = open(filename, "r")
 str = file.read()
@@ -12,7 +13,9 @@ file.close()
 
 Lex = Lexer()
 Lex.analyzeString(str)
+
 Par = Parser(Lex)
 AST = Par.parse()
+
 frame = Frame(None)
 AST.run(frame)
