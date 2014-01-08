@@ -14,7 +14,7 @@ class Frame:
 	def get (self, name):
 		if (name in self.locals):
 			return self.locals[name]
-		if (self.parent == None):
+		if (self.parent == None): #pokud není rodič, nemůžu se podívat nahoru a tím pádem proměná neexistuje
 			raise
 		return self.parent.get(self.name)
 
@@ -53,6 +53,7 @@ class BinaryOperator:
 	
 	def __str__(self):
 		return "( %s %s %s )" % (self.left, self.operator, self.right)
+
 	def run(self, frame):
 		l = self.left.run(frame)
 		r = self.right.run(frame) #hodil by se check jestli to jsou čísla (pro některý operace to holt bez čísel nejde)
@@ -71,22 +72,58 @@ class BinaryOperator:
 				return False
 
 		elif self.operator == le.OP_EQUAL:
-			return l==r
+			if ( self.isfloat(l) and self.isfloat(r) ):
+				if ( self.isint(l) and self.isint(r) ):
+					return int(l) == int(r)
+				else:
+					return float(l) == float(r)
+			else:
+				return False
 
 		elif self.operator == le.OP_NOTEQUAL:
-			return l!=r
+			if ( self.isfloat(l) and self.isfloat(r) ):
+				if ( self.isint(l) and self.isint(r) ):
+					return int(l) != int(r)
+				else:
+					return float(l) != float(r)
+			else:
+				return False
 
 		elif self.operator == le.OP_BIGGER:
-			return l>r
+			if ( self.isfloat(l) and self.isfloat(r) ):
+				if ( self.isint(l) and self.isint(r) ):
+					return int(l) > int(r)
+				else:
+					return float(l) > float(r)
+			else:
+				return False
 
 		elif self.operator == le.OP_BIGGEROREQUAL:
-			return l>=r
+			if ( self.isfloat(l) and self.isfloat(r) ):
+				if ( self.isint(l) and self.isint(r) ):
+					return int(l) > int(r)
+				else:
+					return float(l) >= float(r)
+			else:
+				return False
 
 		elif self.operator == le.OP_SMALLER:
-			return l<r
+			if ( self.isfloat(l) and self.isfloat(r) ):
+				if ( self.isint(l) and self.isint(r) ):
+					return int(l) < int(r)
+				else:
+					return float(l) < float(r)
+			else:
+				return False
 
 		elif self.operator == le.OP_SMALLEROREQUAL:
-			return l<=r
+			if ( self.isfloat(l) and self.isfloat(r) ):
+				if ( self.isint(l) and self.isint(r) ):
+					return int(l) <= int(r)
+				else:
+					return float(l) <= float(r)
+			else:
+				return False
 
 		elif self.operator == le.OP_ADD:
 			if ( self.isfloat(l) and self.isfloat(r) ):
@@ -104,7 +141,7 @@ class BinaryOperator:
 				else:
 					return float(l) - float(r)
 			else:
-				raise ParserError("Nemůžeš odečíst dva stringy nebo string s číslem")
+				raise ("Nemůžeš odečíst dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_MULTIPLY:
 			if ( self.isfloat(l) and self.isfloat(r) ):
@@ -113,7 +150,7 @@ class BinaryOperator:
 				else:
 					return float(l) * float(r)
 			else:
-				raise ParserError("Nemůžeš násobit dva stringy nebo string s číslem")
+				raise ("Nemůžeš násobit dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_MOCNIT:
 			if ( self.isfloat(l) and self.isfloat(r) ):
@@ -122,7 +159,7 @@ class BinaryOperator:
 				else:
 					return float(l) ** float(r)
 			else:
-				raise ParserError("Nemůžeš mocnit dva stringy nebo string s číslem")
+				raise ("Nemůžeš mocnit dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_DIVIDE:
 			if ( self.isfloat(l) and self.isfloat(r) ):
@@ -131,7 +168,7 @@ class BinaryOperator:
 				else:
 					return float(l) / float(r)
 			else:
-				raise ParserError("Nemůžeš dělit dva stringy nebo string s číslem")
+				raise ("Nemůžeš dělit dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_FLOORDIVISION:
 			if ( self.isfloat(l) and self.isfloat(r) ):
@@ -140,7 +177,7 @@ class BinaryOperator:
 				else:
 					return floor( float(l) / float(r) )
 			else:
-				raise ParserError("Nemůžeš dělit dva stringy nebo string s číslem")
+				raise ("Nemůžeš dělit dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_REMAINDER:
 			if ( self.isfloat(l) and self.isfloat(r) ):
@@ -149,7 +186,7 @@ class BinaryOperator:
 				else:
 					return floor( float(l) % float(r) )
 			else:
-				raise ParserError("Nemůžeš dělit dva stringy nebo string s číslem")
+				raise ("Nemůžeš dělit dva stringy nebo string s číslem")
 
 	def isint(self,x): #vyzkouší jestli to jde převést na int, vrátí True nebo False
 		try:
@@ -251,8 +288,9 @@ class While:
 
 	def __str__(self):
 		return "while (%s) %s" % (self.condition, self.block)
+
 	def run(self, frame):
-		while self.condition.run == True:
+		while self.condition.run(frame) == True:
 			self.block.run(frame)
 
 class For:
@@ -333,7 +371,14 @@ class Array:
 		a += "]"
 		return a
 
+class Print:
+	def __init__(self,what):
+		self.what = what
 
+	def __str__(self):
+		return "print ( %s )" % (self.what)
 
+	def run(self, frame):
+		print self.what.run(frame)
 
 

@@ -29,6 +29,7 @@ class Lexer:
 	KW_CONTINUE = "continue"
 	KW_RETURN = "return"
 	KW_FUNCTION = "function"
+	KW_PRINT = "print"
 
 	#operace
 	OP_ADD = "+" # operator scitani
@@ -43,7 +44,7 @@ class Lexer:
 	OP_AND = "and" # a to: and AND &
 	OP_OR = "or" # a to: or OR 
 	OP_NOT = "not" # a to: not NOT
-	OP_NOTEQUAL = "<>"
+	OP_NOTEQUAL = "<>" # nebo i !=
 	OP_BIGGER = ">"
 	OP_SMALLER = "<"
 	OP_BIGGEROREQUAL = ">="
@@ -79,6 +80,7 @@ class Lexer:
 		self._keywords["continue"] = Lexer.KW_CONTINUE
 		self._keywords["return"] = Lexer.KW_RETURN
 		self._keywords["function"] = Lexer.KW_FUNCTION
+		self._keywords["print"] = Lexer.KW_PRINT
 
 		self._keywords["and"] = Lexer.OP_AND
 		self._keywords["or"] = Lexer.OP_OR
@@ -339,7 +341,12 @@ class Lexer:
 
 		elif (c == "!"):
 			self.popChar()
-			self.addToken(Lexer.OP_NOT, None, self.currentline)
+			c = self.topChar()
+			if (c == '='):
+				self.popChar()
+				self.addToken(Lexer.OP_NOTEQUAL, None, self.currentline)
+			else:
+				self.addToken(Lexer.OP_NOT, None, self.currentline)
 
 		elif (c == "%"):
 			self.popChar()
