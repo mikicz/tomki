@@ -5,17 +5,19 @@ from lexer import Lexer
 from slparser import Parser
 from ast import *
 
+def Tomki():
+	filename = sys.argv[1]
+	file = open(filename, "r")
+	string = file.read()
+	file.close()
 
-filename = str(sys.argv[1])
-file = open(filename, "r")
-str = file.read()
-file.close()
+	Lex = Lexer()
+	Lex.analyzeString(string)
 
-Lex = Lexer()
-Lex.analyzeString(str)
+	Par = Parser(Lex)
+	AST = Par.parse()
 
-Par = Parser(Lex)
-AST = Par.parse()
+	frame = Frame(None)
+	AST.run(frame)
 
-frame = Frame(None)
-AST.run(frame)
+Tomki()
