@@ -1,5 +1,5 @@
 #gramatika
-'''
+```
 IDENTIFIKATOR ::= a..z|A..Z{0..0|a..z|A..Z}		# Identifikátory začínají písmenem a mají v sobě písmena či čísla
 CISLO ::= ["$d"]0..9{0..9}[.0..9{0..9}]
 BINARNICISLO ::= "$b" 0|1{0|1}						# binární a hex čísla pouze s $b nebo $h, u decimálního čísla není $d nutné
@@ -7,9 +7,9 @@ HEXADECIMALNICISLO ::= "$h" 0..9|A..F{0..9|A..F}
 OPERATOR ::= +|-|/|*|^|&|!|"|"|and|or|not|==|!=|%|**|//|<>|>|<|>=|<=|&|"||"|!
 RIDICIZNAKY ::= "("|")"|"{"|"}"|"["|"]"			# prakticky totéž co operátory
 KEYWORD ::= if|else|elif|while|for|break|continue|return|function|in
-'''
+```
 ##podminky
-'''
+```
 PROGRAM ::= { STATEMENT }
 
 STATEMENT ::= ( CONDITION | LOOP | E | FDEF | BLOCK ) ;
@@ -37,4 +37,4 @@ ARRAY :== OP_BRACKETS_LEFT [ E ]{ ,E } OP_BRACKETS_RIGHT # definice pole (např.
 FCALL ::= ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT
 
 ARGS ::= [ E { OP_COMMA E } ]
-'''
+```
