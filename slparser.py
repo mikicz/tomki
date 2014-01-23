@@ -133,7 +133,7 @@ class Parser:
 		if (self.top()[0] == Lexer.OP_SUBSTRACT):
 			self.pop(Lexer.OP_SUBSTRACT)[0]
 			rhs = self.parseF()
-			lhs = BinaryOperator((number, 0, None), rhs, Lexer.OP_SUBSTRACT)
+			lhs = BinaryOperator(Literal(0), rhs, Lexer.OP_SUBSTRACT)
 		else:
 			lhs = self.parseF()
 		return lhs
