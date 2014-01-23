@@ -2,7 +2,7 @@
 ```
 IDENTIFIKATOR ::= a..z|A..Z{0..0|a..z|A..Z}		# Identifikátory začínají písmenem a mají v sobě písmena či čísla
 CISLO ::= ["$d"]0..9{0..9}[.0..9{0..9}]
-BINARNICISLO ::= "$b" 0|1{0|1}					# binární a hex čísla pouze s $b nebo $h
+BINARNICISLO ::= "$b" 0|1{0|1}					# binární a hex čísla pouze s $b nebo $h (decimální mají $d)
 HEXADECIMALNICISLO ::= "$h" 0..9|A..F{0..9|A..F}
 OPERATOR ::= +|-|/|*|^|&|!|"|"|and|or|not|==|!=|%|**|//|<>|>|<|>=|<=|&|"||"|!
 RIDICIZNAKY ::= "("|")"|"{"|"}"|"["|"]"			# prakticky totéž co operátory
