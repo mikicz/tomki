@@ -2,7 +2,7 @@
 ```
 IDENTIFIKATOR ::= a..z|A..Z{0..0|a..z|A..Z}		# Identifikátory začínají písmenem a mají v sobě písmena či čísla
 CISLO ::= ["$d"]0..9{0..9}[.0..9{0..9}]
-BINARNICISLO ::= "$b" 0|1{0|1}						# binární a hex čísla pouze s $b nebo $h, u decimálního čísla není $d nutné
+BINARNICISLO ::= "$b" 0|1{0|1}					# binární a hex čísla pouze s $b nebo $h, u decimálního čísla není $d nutné
 HEXADECIMALNICISLO ::= "$h" 0..9|A..F{0..9|A..F}
 OPERATOR ::= +|-|/|*|^|&|!|"|"|and|or|not|==|!=|%|**|//|<>|>|<|>=|<=|&|"||"|!
 RIDICIZNAKY ::= "("|")"|"{"|"}"|"["|"]"			# prakticky totéž co operátory
@@ -20,7 +20,8 @@ CONDITION ::= KW_IF '(' E ')' BLOCK { KW_ELIF '(' E ')' BLOCK } [ KW_ELSE BLOCK 
 
 LOOP ::= KW_WHILE '(' E ')' BLOCK | KW_FOR ident KW_IN ( ident | FCALL | ARRAY) BLOCK
 
-FDEF :== KW_FUNCTION ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT BLOCK # definice funkce např mergesort = function (pole)
+	# definice funkce např mergesort = function (pole)
+FDEF :== KW_FUNCTION ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT BLOCK
 
 E ::= E1 [ OP_ASSIGN E1 ] #aka ASSIGNMENT ::= ident op_assign EXPRESSION
 E1 ::= E2 { OP_OR E1 }
