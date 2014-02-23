@@ -12,17 +12,17 @@ def testLexer():
 		print(l.popToken())
 
 def testParser():
-	s = """x = 0;
-	while (x <10) {x = x+1} ;
-	print (x);"""
+	s = """function prdel(a,b) {c=a+b;print (c);};prdel(5,9);"""
 	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
 	l.analyzeString(s) # timhle mu reknete, aby naparsoval string, ktery jste napsali
 	p = Parser(l) # zalozim si parser a dam mu lexer ze ktereho bude cist tokeny
 	ast = p.parse() # naparsuju co mam v lexeru a vratim AST 
 	frame = Frame(None)
+	ffy=FunctionFrame()
 	print(ast) # zobrazim ten strom
-	ast.run(frame)
+	ast.run(frame,ffy)
 	print frame.locals
+	print ffy.functions
 
 
 

@@ -18,6 +18,18 @@ class Frame:
 			raise
 		return self.parent.get(self.name)
 
+class FunctionFrame:
+
+	def __init__(self):
+		self.functions = {}
+
+	def add (self, name, arrgs, block):
+		self.functions[name] = [arrgs, block]
+
+	def get (self, name):
+		return self.functions[name]
+
+
 class Block:
 	""" Blok prikazu. 
 
@@ -38,9 +50,9 @@ class Block:
 		self.result = self.result + "\n}\n"
 		return self.result
 
-	def run(self, frame):
+	def run(self, frame,ff):
 		for prikaz in self.code:
-			prikaz.run(frame)	 
+			prikaz.run(frame,ff)	 
 
 class BinaryOperator:
 	""" Binary operator. 
@@ -54,9 +66,9 @@ class BinaryOperator:
 	def __str__(self):
 		return "( %s %s %s )" % (self.left, self.operator, self.right)
 
-	def run(self, frame):
-		l = self.left.run(frame)
-		r = self.right.run(frame) #hodil by se check jestli to jsou čísla (pro některý operace to holt bez čísel nejde)
+	def run(self, frame,ff):
+		l = self.left.run(frame,None)
+		r = self.right.run(frame,None) 
 		le = Lexer() #abychom si mohli číst typy operátorů
 
 		if self.operator == le.OP_OR:
@@ -126,6 +138,8 @@ class BinaryOperator:
 				return False
 
 		elif self.operator == le.OP_ADD:
+			print l
+			print r
 			if ( self.isfloat(l) and self.isfloat(r) ):
 				if ( self.isint(l) and self.isint(r) ):
 					return int(l) + int(r)
@@ -214,7 +228,7 @@ class VariableRead:
 	def __str__(self):
 		return self.variableName
 
-	def run(self,frame):
+	def run(self,frame,ff):
 		return frame.get(self.variableName)
 
 class VariableWrite:
@@ -226,8 +240,8 @@ class VariableWrite:
 	def __str__(self):
 		return "%s = %s" % (self.variableName, self.value)
 
-	def run(self,frame):
-		return frame.set(self.variableName,self.value.run(frame))
+	def run(self,frame,ff):
+		return frame.set(self.variableName,self.value.run(frame,None))
 
 class Literal:
 	""" Literal (tedy jakakoli konstanta, cislo). """
@@ -237,7 +251,7 @@ class Literal:
 	def __str__(self):
 		return self.value
 
-	def run(self, frame):
+	def run(self, frame,ff):
 		return self.value
 
 class If:
@@ -262,17 +276,17 @@ class If:
 			a+= "else %s " % (self.falseCase)
 		return a
 
-	def run(self, frame):
+	def run(self, frame,ff):
 		self.istrue = 0
-		if self.condition.run(frame) == True:
+		if self.condition.run(frame,None) == True:
 			self.istrue = 1
-			self.trueCase.run(frame)
+			self.trueCase.run(frame,None)
 		for i in self.elifs:
-			if i[0].run(frame) == True:
+			if i[0].run(frame,None) == True:
 				self.istrue = 1
-				i[1].run(frame)
+				i[1].run(frame,None)
 		if self.istrue==0:
-			self.falseCase.run(frame)
+			self.falseCase.run(frame,None)
 
 
 
@@ -289,9 +303,9 @@ class While:
 	def __str__(self):
 		return "while (%s) %s" % (self.condition, self.block)
 
-	def run(self, frame):
-		while self.condition.run(frame) == True:
-			self.block.run(frame)
+	def run(self, frame,ff):
+		while self.condition.run(frame,None) == True:
+			self.block.run(frame,None)
 
 class For:
 	""" pamatuje si kam se má ukládat jednotlivý prvek seznamu, seznam a block
@@ -320,35 +334,49 @@ class FunctionWrite:
 		if (self.arrgs == []):
 			return "function = %s () %s" % (self.name, self.block)
 		else:
-			a = "function = %s ("
+			a = "function = %s (" % (self.name[1],)
 			x=1
 			for y in self.arrgs:
 				if x == 1:
-					a += y
+					a += y.__str__()
 				else:
-					a += ", "+ y
-			a += ") " + self.block
+					a += ", "+ y.__str__()
+				x+=1
+			a += ") " + self.block.__str__()
 			return a
+
+	def run(self, frame, ff):
+		ff.add(self.name, self.arrgs, self.block)
 
 class FunctionCall:
 	def __init__(self, name, arrgs):
 		self.name = name
 		self.arrgs = arrgs
-		self.block = block
 
 	def __str__(self):
 		if (self.arrgs == []):
-			return " %s () %s" % (self.name, self.block)
+			return " %s ()" % (self.name[1],)
 		else:
-			a = "%s ("
+			a = "%s ("  % (self.name[1],)
 			x=1
 			for y in self.arrgs:
 				if x == 1:
-					a += y
+					a += y.__str__()
 				else:
-					a += ", "+ y
+					a += ", "+ y.__str__()
+				x+=1
 			a += ") "
 			return a
+
+	def run (self, frame, ff):
+		(arrrgumenty, block) = ff.get(self.name)
+		novyframe=Frame(frame)
+		x=0
+		for i in arrrgumenty:
+			novyframe.set(i.__str__(),self.arrgs[x])
+			x+=1
+		block.run(novyframe,ff)
+
 
 class ArrgIdent:
 	def __init__(self,name):
@@ -378,7 +406,7 @@ class Print:
 	def __str__(self):
 		return "print ( %s )" % (self.what)
 
-	def run(self, frame):
-		print self.what.run(frame)
+	def run(self, frame,ff):
+		print self.what.run(frame,None)
 
 

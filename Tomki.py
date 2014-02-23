@@ -19,7 +19,8 @@ def Tomki():
         AST = Par.parse()
 
         frame = Frame(None)
-        AST.run(frame)
+        functionFrame = functionFrame()
+        AST.run(frame, ff=functionFrame)
     else:
         print("Error:\nNo file to interpret")
 

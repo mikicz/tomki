@@ -69,6 +69,9 @@ class Parser:
 	   
 		Ulozeni hodnoty do promenne vypada tak, ze na leve strane je identifikator promenne, hned za nim je operator prirazeni a za nim je vyraz, ktery vypocitava hodnotu, kterou do promenne chci ulozit. Tohle je zjednodusena verze prirazeni, viz komentare k hodine. 
 		"""
+		
+		if (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
+			return self.parseFunctionCall()
 		variableName = self.pop(Lexer.IDENT)[1]
 		self.pop(Lexer.OP_ASSIGN)
 		rhs = self.parseExpression()
@@ -156,7 +159,7 @@ class Parser:
 			#tady bude čtení proměných, co jsou seznamy
 
 		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
-			return self.parseFunctionCall
+			return self.parseFunctionCall()
 
 		elif (self.top()[0] == Lexer.OP_BRACKETS_LEFT):
 			return parseArray()
@@ -255,15 +258,16 @@ class Parser:
 
 	def parseFunction(self):
 		""" FDEF :== KW_FUNCTION ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT BLOCK """
+		self.pop(Lexer.KW_FUNCTION)
 		functionName=self.pop(Lexer.IDENT)
-		self.pop(OP_PARENTHESES_LEFT)
+		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		arrgs=[]
 		while(self.top()[0] == Lexer.IDENT): 
 			arrgs.append(ArrgIdent(self.pop(Lexer.IDENT)[1]))
 			if self.top()[0] == Lexer.OP_COMMA:
 				self.pop(Lexer.OP_COMMA)
 
-		self.pop(OP_PARENTHESES_RIGHT)
+		self.pop(Lexer.OP_PARENTHESES_RIGHT)
 		block = self.parseBlock()
 		return FunctionWrite(functionName, arrgs, block)
 
