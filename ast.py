@@ -9,7 +9,10 @@ class Frame:
 		self.parent = parent
 
 	def set (self, name, value):
-		self.locals[name] = value
+		if hasattr(value, 'literal'): #uloží se jenom literal, zbytek se nejdřív pustí, aby z toho vyšel literal
+			self.locals[name] = value
+		else:
+			self.locals[name] = value.run(self, None)
 
 	def get (self, name):
 		if (name in self.locals):
@@ -43,6 +46,10 @@ class Block:
 		""" Prida novy prikaz. """
 		self.code.append(node)
 
+	def add_zacatek(self,node):
+		""" Přidá nový příkaz na začátek bloku"""
+		self.code = [node] + self.code
+
 	def __str__(self):
 		self.result = "{"
 		for node in self.code:
@@ -67,140 +74,138 @@ class BinaryOperator:
 		return "( %s %s %s )" % (self.left, self.operator, self.right)
 
 	def run(self, frame,ff):
-		l = self.left.run(frame,None)
-		r = self.right.run(frame,None) 
+		l = self.left.run(frame,ff)
+		r = self.right.run(frame,ff) 
 		le = Lexer() #abychom si mohli číst typy operátorů
 
 		if self.operator == le.OP_OR:
 			if l == True or r == True:
-				return True
+				return Literal(True)
 			else:
-				return False
+				return Literal(False)
 
 		elif self.operator == le.OP_AND:
 			if l == True and r == True:
-				return True
+				return Literal(True)
 			else:
-				return False
+				return Literal(False)
 
 		elif self.operator == le.OP_EQUAL:
 			if ( self.isfloat(l) and self.isfloat(r) ):
 				if ( self.isint(l) and self.isint(r) ):
-					return int(l) == int(r)
+					return Literal(int(l) == int(r) )
 				else:
-					return float(l) == float(r)
+					return Literal(float(l) == float(r) )
 			else:
-				return False
+				return Literal(False)
 
 		elif self.operator == le.OP_NOTEQUAL:
 			if ( self.isfloat(l) and self.isfloat(r) ):
 				if ( self.isint(l) and self.isint(r) ):
-					return int(l) != int(r)
+					return Literal(int(l) != int(r) )
 				else:
-					return float(l) != float(r)
+					return Literal(float(l) != float(r) )
 			else:
-				return False
+				return Literal(False)
 
 		elif self.operator == le.OP_BIGGER:
 			if ( self.isfloat(l) and self.isfloat(r) ):
 				if ( self.isint(l) and self.isint(r) ):
-					return int(l) > int(r)
+					return Literal(int(l) > int(r) )
 				else:
-					return float(l) > float(r)
+					return Literal(float(l) > float(r) )
 			else:
-				return False
+				return Literal(False)
 
 		elif self.operator == le.OP_BIGGEROREQUAL:
 			if ( self.isfloat(l) and self.isfloat(r) ):
 				if ( self.isint(l) and self.isint(r) ):
-					return int(l) > int(r)
+					return Literal(int(l) > int(r) )
 				else:
-					return float(l) >= float(r)
+					return Literal(float(l) >= float(r) )
 			else:
-				return False
+				return Literal(False)
 
 		elif self.operator == le.OP_SMALLER:
 			if ( self.isfloat(l) and self.isfloat(r) ):
 				if ( self.isint(l) and self.isint(r) ):
-					return int(l) < int(r)
+					return Literal(int(l) < int(r) )
 				else:
-					return float(l) < float(r)
+					return Literal(float(l) < float(r) )
 			else:
-				return False
+				return Literal(False)
 
 		elif self.operator == le.OP_SMALLEROREQUAL:
 			if ( self.isfloat(l) and self.isfloat(r) ):
 				if ( self.isint(l) and self.isint(r) ):
-					return int(l) <= int(r)
+					return Literal(int(l) <= int(r) )
 				else:
-					return float(l) <= float(r)
+					return Literal(float(l) <= float(r) )
 			else:
-				return False
+				return Literal(False)
 
 		elif self.operator == le.OP_ADD:
-			print l
-			print r
 			if ( self.isfloat(l) and self.isfloat(r) ):
 				if ( self.isint(l) and self.isint(r) ):
-					return int(l) + int(r)
+					return Literal(int(l) + int(r) )
 				else:
-					return float(l) + float(r)
+					return Literal(float(l) + float(r) )
 			else:
 				return l + r
 
 		elif self.operator == le.OP_SUBSTRACT:
 			if ( self.isfloat(l) and self.isfloat(r) ): #jsou to čísla, vezme to i float
 				if ( self.isint(l) and self.isint(r) ): # pouze celá čísla
-					return int(l) - int(r)
+					return Literal(int(l) - int(r) )
 				else:
-					return float(l) - float(r)
+					return Literal(float(l) - float(r) )
 			else:
-				raise ("Nemůžeš odečíst dva stringy nebo string s číslem")
+				raise BaseException("Nemůžeš odečíst dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_MULTIPLY:
 			if ( self.isfloat(l) and self.isfloat(r) ):
 				if ( self.isint(l) and self.isint(r) ):
-					return int(l) * int(r)
+					return Literal(int(l) * int(r) )
 				else:
-					return float(l) * float(r)
+					return Literal(float(l) * float(r) )
 			else:
-				raise ("Nemůžeš násobit dva stringy nebo string s číslem")
+				raise BaseException("Nemůžeš násobit dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_MOCNIT:
 			if ( self.isfloat(l) and self.isfloat(r) ):
 				if ( self.isint(l) and self.isint(r) ):
-					return int(l) ** int(r)
+					return Literal(int(l) ** int(r) )
 				else:
-					return float(l) ** float(r)
+					return Literal(float(l) ** float(r) )
 			else:
-				raise ("Nemůžeš mocnit dva stringy nebo string s číslem")
+				raise BaseException("Nemůžeš mocnit dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_DIVIDE:
 			if ( self.isfloat(l) and self.isfloat(r) ):
 				if ( self.isint(l) and self.isint(r) ):
-					return int(l) / int(r)
+					return Literal(int(l) / int(r) )
 				else:
-					return float(l) / float(r)
+					return Literal(float(l) / float(r) )
 			else:
-				raise ("Nemůžeš dělit dva stringy nebo string s číslem")
+				raise BaseException("Nemůžeš dělit dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_FLOORDIVISION:
 			if ( self.isfloat(l) and self.isfloat(r) ):
 				if ( self.isint(l) and self.isint(r) ):
-					return int(l) / int(r)
+					return Literal(int(l) / int(r) )
 				else:
-					return floor( float(l) / float(r) )
+					return Literal(floor( float(l) / float(r) ) )
 			else:
-				raise ("Nemůžeš dělit dva stringy nebo string s číslem")
+				raise BaseException("Nemůžeš dělit dva stringy nebo string s číslem")
 
 		elif self.operator == le.OP_REMAINDER:
 			if ( self.isfloat(l) and self.isfloat(r) ):
 				if ( self.isint(l) and self.isint(r) ):
-					return int(l) % int(r)
+					return Literal(int(l) % int(r) )
 				else:
-					return floor( float(l) % float(r) )
+					return Literal(floor( float(l) % float(r) ) )
 			else:
-				raise ("Nemůžeš dělit dva stringy nebo string s číslem")
+				raise BaseException("Nemůžeš dělit dva stringy nebo string s číslem")
 
 	def isint(self,x): #vyzkouší jestli to jde převést na int, vrátí True nebo False
 		try:
@@ -224,35 +229,59 @@ class VariableRead:
 	""" Cteni hodnoty ulozene v promenne. """
 	def __init__(self, variableName):
 		self.variableName = variableName
+		self.type = "variableRead"
 
 	def __str__(self):
 		return self.variableName
 
 	def run(self,frame,ff):
-		return frame.get(self.variableName)
+		return frame.get(self.variableName).run(frame,ff)
 
 class VariableWrite:
 	""" Zapis hodnoty do promenne. Krom nazvu promenne si pamatuje i vyraz, kterym se vypocita hodnota. """
 	def __init__(self, variableName, value):
 		self.variableName = variableName
 		self.value = value
+		self.type = "variableWrite"
 
 	def __str__(self):
 		return "%s = %s" % (self.variableName, self.value)
 
 	def run(self,frame,ff):
-		return frame.set(self.variableName,self.value.run(frame,None))
+		return frame.set(self.variableName,self.value)
 
 class Literal:
 	""" Literal (tedy jakakoli konstanta, cislo). """
 	def __init__(self, value):
-		self.value = str(value)
+		self.value = value
+		self.literal = True
+		self.type = "literal"
 
 	def __str__(self):
-		return self.value
+		return str(self.value)
 
 	def run(self, frame,ff):
-		return self.value
+		if (self.isfloat(self.value)):
+			if (self.isint(self.value)):
+				return int(self.value)
+			else:
+				return float(self.value)
+		else:
+			return str(self.value)
+
+	def isint(self,x): #vyzkouší jestli to jde převést na int, vrátí True nebo False
+		try:
+			int(x)
+			return True
+		except:
+			return False
+
+	def isfloat(self,x): #samé s floatem
+		try: 
+			float(x)
+			return True
+		except:
+			return False
 
 class If:
 	""" Prikaz if. Pamatuje si vyraz ktery je podminkou a pak bloky pro true a else casti. 
@@ -278,11 +307,11 @@ class If:
 
 	def run(self, frame,ff):
 		self.istrue = 0
-		if self.condition.run(frame,None) == True:
+		if self.condition.run(frame,None).run(frame,None) == True: #condition.run vrací Literal True nbo False
 			self.istrue = 1
 			self.trueCase.run(frame,None)
 		for i in self.elifs:
-			if i[0].run(frame,None) == True:
+			if i[0].run(frame,None).frame(frame,None) == True:
 				self.istrue = 1
 				i[1].run(frame,None)
 		if self.istrue==0:
@@ -373,9 +402,11 @@ class FunctionCall:
 		novyframe=Frame(frame)
 		x=0
 		for i in arrrgumenty:
-			novyframe.set(i.__str__(),self.arrgs[x])
+			block.add_zacatek(VariableWrite(i.run(frame,ff),self.arrgs[x]))
+			#novyframe.set(i.__str__(),Literal(self.arrgs[x].run(frame,ff)))
 			x+=1
 		block.run(novyframe,ff)
+		print novyframe.locals
 
 
 class ArrgIdent:
@@ -383,6 +414,9 @@ class ArrgIdent:
 		self.name = name
 
 	def __str__(self):
+		return self.name
+
+	def run(self, frame, ff):
 		return self.name
 
 class Array:
