@@ -13,3 +13,6 @@ class Array:
 				a += "," + i
 		a += "]"
 		return a
+
+	def run(self, frame, ff):
+		return self.polozkypole

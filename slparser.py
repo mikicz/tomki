@@ -150,7 +150,7 @@ class Parser:
 		return lhs
 
 	def parseF(self):
-		""" F ::= number | ident [ OP_BRACKETS_LEFT E OP_BRACKETS_RIGHT ] | FCALL | OP_PARENTHESES_LEFT E OP_PARENTHESES_RIGHT| FIELD | string
+		""" F ::= number | ident [ OP_BRACKETS_LEFT E OP_BRACKETS_RIGHT ] | FCALL | OP_PARENTHESES_LEFT E OP_PARENTHESES_RIGHT| FIELD | STRING
 		
 		Faktorem vyrazu pak je bud cislo (literal), nebo nazev promenne, v tomto pripade se vzdycky jedna o cteni promenne a nebo znova cely vyraz v zavorkach. 
 		"""
@@ -174,7 +174,7 @@ class Parser:
 			return self.parseFunctionCall()
 
 		elif (self.top()[0] == Lexer.OP_BRACKETS_LEFT):
-			return parseArray()
+			return self.parseArray()
 
 		else:
 			self.pop(Lexer.OP_PARENTHESES_LEFT)
@@ -288,8 +288,9 @@ class Parser:
 		polozkypole = []
 		while(self.top()[0] != Lexer.OP_BRACKETS_RIGHT):
 			polozkypole.append(self.parseExpression())
-			self.pop(Lexer.OP_COMMA)
-		self.pop(OP_BRACKETS_RIGHT)  #For every upvote this gets I will stroke me penis once. Let's wear the skin off! 
+			if self.top()[0] == Lexer.OP_COMMA:
+				self.pop(Lexer.OP_COMMA)
+		self.pop(Lexer.OP_BRACKETS_RIGHT)  #For every upvote this gets I will stroke me penis once. Let's wear the skin off! 
 		return Array(polozkypole)
 
 	def parsePrint(self):

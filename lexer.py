@@ -403,10 +403,10 @@ class Lexer:
 			self.addToken(Lexer.OP_BRACES_RIGHT, None, self.currentline)
 		elif (c == "["):
 			self.popChar()
-			self.addToken(Lexer.OP_BRACKETS_RIGHT, None, self.currentline)
+			self.addToken(Lexer.OP_BRACKETS_LEFT, None, self.currentline)
 		elif (c == "]"):
 			self.popChar()
-			self.addToken(Lexer.OP_BRACKETS_LEFT, None, self.currentline)
+			self.addToken(Lexer.OP_BRACKETS_RIGHT, None, self.currentline)
 
 		elif (c == ","):
 			self.popChar()
