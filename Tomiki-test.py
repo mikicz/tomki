@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from lexer import Lexer
 # jmenuje se slparser (Simple Language Parser), aby se netriskal s pythonim modulem parser
 from slparser import Parser

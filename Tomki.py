@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import sys
+sys.path.append('ast/')
 from lexer import Lexer
 # jmenuje se slparser (Simple Language Parser), aby se netriskal s pythonim modulem parser
 from slparser import Parser
@@ -19,8 +20,8 @@ def Tomki():
         AST = Par.parse()
 
         frame = Frame(None)
-        functionFrame = functionFrame()
-        AST.run(frame, ff=functionFrame)
+        functionFrame = FunctionFrame()
+        AST.run(frame, functionFrame)
     else:
         print("Error:\nNo file to interpret")
 
