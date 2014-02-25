@@ -13,7 +13,10 @@ def testLexer():
 
 def testParser():
 	s = """function secti(a,b)
-			{c = a + b;return c;};
+			{
+				c = a + b;
+				return c;
+			};
 			secti(1, 3);
 			print (x);"""
 	#s = """ a = 5; b = a + 3;"""
