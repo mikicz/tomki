@@ -59,7 +59,10 @@ class Block:
 
 	def run(self, frame,ff):
 		for prikaz in self.code:
-			prikaz.run(frame,ff)	 
+			if (prikaz.type!="Return"):
+				prikaz.run(frame,ff)
+			else:
+				return prikaz.run(frame,ff)	 
 
 class BinaryOperator:
 	""" Binary operator. 
@@ -69,6 +72,7 @@ class BinaryOperator:
 		self.left = left
 		self.right = right
 		self.operator = operator
+		self.type = "BinaryOperator"
 	
 	def __str__(self):
 		return "( %s %s %s )" % (self.left, self.operator, self.right)
@@ -255,33 +259,15 @@ class Literal:
 	def __init__(self, value):
 		self.value = value
 		self.literal = True
-		self.type = "literal"
+		self.type = "Literal"
 
 	def __str__(self):
 		return str(self.value)
 
 	def run(self, frame,ff):
-		if (self.isfloat(self.value)):
-			if (self.isint(self.value)):
-				return int(self.value)
-			else:
-				return float(self.value)
-		else:
-			return str(self.value)
+		return self.value
 
-	def isint(self,x): #vyzkouší jestli to jde převést na int, vrátí True nebo False
-		try:
-			int(x)
-			return True
-		except:
-			return False
-
-	def isfloat(self,x): #samé s floatem
-		try: 
-			float(x)
-			return True
-		except:
-			return False
+	
 
 class If:
 	""" Prikaz if. Pamatuje si vyraz ktery je podminkou a pak bloky pro true a else casti. 
@@ -294,6 +280,7 @@ class If:
 		self.trueCase = trueCase
 		self.elifs = elifs # prázdné [], ve formátu [[condition, block], ...]
 		self.falseCase = falseCase
+		self.type = "If"
 
 	def __str__(self):
 		if self.elifs == []:
@@ -328,6 +315,7 @@ class While:
 	def __init__(self, condition, block):
 		self.condition = condition
 		self.block = block
+		self.type = "While"
 
 	def __str__(self):
 		return "while (%s) %s" % (self.condition, self.block)
@@ -345,6 +333,7 @@ class For:
 		self.variable = variable
 		self.array = array
 		self.block = block
+		self.type = "For"
 
 	def __str__(self):
 		return "for (%s) in %s %s" % (self.variable, self.array, self.block)
@@ -358,6 +347,7 @@ class FunctionWrite:
 		self.name = name
 		self.arrgs = arrgs
 		self.block = block
+		self.type = "FunctionWrite"
 
 	def __str__(self):
 		if (self.arrgs == []):
@@ -381,6 +371,7 @@ class FunctionCall:
 	def __init__(self, name, arrgs):
 		self.name = name
 		self.arrgs = arrgs
+		self.type = "FunctionCall"
 
 	def __str__(self):
 		if (self.arrgs == []):
@@ -405,13 +396,14 @@ class FunctionCall:
 			block.add_zacatek(VariableWrite(i.run(frame,ff),self.arrgs[x]))
 			#novyframe.set(i.__str__(),Literal(self.arrgs[x].run(frame,ff)))
 			x+=1
-		block.run(novyframe,ff)
+		return block.run(novyframe,ff)
 		print novyframe.locals
 
 
 class ArrgIdent:
 	def __init__(self,name):
 		self.name = name
+		self.type = "ArrgIdent"
 
 	def __str__(self):
 		return self.name
@@ -422,6 +414,7 @@ class ArrgIdent:
 class Array:
 	def __init__(self,polozkypole):
 		self.polozkypole = polozkypole
+		self.type = "Array"
 
 	def __str__(self):
 		a = "["
@@ -436,6 +429,7 @@ class Array:
 class Print:
 	def __init__(self,what):
 		self.what = what
+		self.type = "Print"
 
 	def __str__(self):
 		return "print ( %s )" % (self.what)
@@ -443,4 +437,13 @@ class Print:
 	def run(self, frame,ff):
 		print self.what.run(frame,None)
 
+class Return:
+	def __init__(self,what):
+		self.what = what
+		self.type = "Return"
 
+	def __str__(self):
+		return "return  %s " % (self.what)
+
+	def run(self, frame,ff):
+		return self.what.run(frame,None)

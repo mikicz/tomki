@@ -23,7 +23,7 @@ class Parser:
 		if (t[0] == type):
 			return self.lexer.popToken()
 		else:
-			raise SyntaxError("Ocekavany token " + type + " neni na vstupu " + str(t[0]) + " misto nej)")
+			raise SyntaxError("Ocekavany token " + type + " neni na vstupu " + str(t[0]) + " misto nej na radku " + str(t[2])+".")
 
 	def top(self, i = 0):
 		""" Abych nemusel tolik psat, provede top() z lexeru. 
@@ -44,7 +44,7 @@ class Parser:
 			self.pop()
 		return program
 
-	def parseStatement(self):
+	def parseStatement(self,thisisafunction=False):
 		""" STATEMENT ::= ( CONDITION | LOOP | E | FDEF ) ;
 
 		Statement je bud if, nebo zapis promenne. 
@@ -61,6 +61,11 @@ class Parser:
 			return self.parseBlock()
 		elif (self.top()[0] == Lexer.KW_PRINT):
 			return self.parsePrint()
+		elif (self.top()[0] == Lexer.KW_RETURN):
+			if (thisisafunction == True):
+				return self.parseReturn()
+			else:
+				raise BaseException("Return může být pouze v bloku funkce")
 		else:
 			return self.parseAssignment()
 
@@ -230,7 +235,7 @@ class Parser:
 		block = self.parseBlock()
 		return For(var,array,block)
 
-	def parseBlock(self):
+	def parseBlock(self, thisisafunction=False):
 		""" BLOCK ::= op_braceopen { STATEMENT } op_braceclose
 
 		Blok je podobny programu, proste nekolik prikazu za sebou. 
@@ -238,7 +243,7 @@ class Parser:
 		self.pop(Lexer.OP_BRACES_LEFT)
 		result = Block()
 		while (self.top()[0] != Lexer.OP_BRACES_RIGHT):
-			result.add(self.parseStatement())
+			result.add(self.parseStatement(thisisafunction=thisisafunction))
 			if self.top()[0] == Lexer.OP_SEMICOLON:
 				self.pop(Lexer.OP_SEMICOLON)
 		self.pop(Lexer.OP_BRACES_RIGHT)
@@ -268,7 +273,7 @@ class Parser:
 				self.pop(Lexer.OP_COMMA)
 
 		self.pop(Lexer.OP_PARENTHESES_RIGHT)
-		block = self.parseBlock()
+		block = self.parseBlock(thisisafunction=True)
 		return FunctionWrite(functionName, arrgs, block)
 
 	def parseArray(self):
@@ -282,9 +287,16 @@ class Parser:
 
 	def parsePrint(self):
 		self.pop(Lexer.KW_PRINT)
-		self.pop(Lexer.OP_PARENTHESES_LEFT)
-		x = self.parseExpression()
-		self.pop(Lexer.OP_PARENTHESES_RIGHT)
+		if (self.top()[0] == Lexer.OP_PARENTHESES_LEFT):
+			self.pop(Lexer.OP_PARENTHESES_LEFT)
+			x = self.parseExpression()
+			self.pop(Lexer.OP_PARENTHESES_RIGHT)
+		else:
+			x = self.parseExpression()
 		return Print(x)
+
+	def parseReturn(self):
+		self.pop(Lexer.KW_RETURN)
+		return Return(self.parseExpression())
 
 
