@@ -12,13 +12,13 @@ def testLexer():
 		print(l.popToken())
 
 def testParser():
-	s = """function secti(a,b)
-			{
-				c = a + b;
-				return c;
-			};
-			x = secti(1, 3);
-			print (x);"""
+	s = """
+		x = 'laskjflasdfj asfj ^˘řěščř {dsgfsd][đĐ gflasdhfsvféíěšéčrnjycv,. .,v';
+
+		y = 1;
+		z = x + y;
+		print z;
+	"""
 	#s = """ a = 5; b = a + 3;"""
 	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
 	l.analyzeString(s) # timhle mu reknete, aby naparsoval string, ktery jste napsali

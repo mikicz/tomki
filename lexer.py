@@ -15,6 +15,7 @@ class Lexer:
 	EOF = "<EOF>" # typ token pro konec souboru, End Of File, oznacuje, ze uz neni zadny dalsi token za nim
 	_EOF = (EOF, None, None) # tohle je token, je to tuple z typu, a hodnoty, hodnota EOF je zadna
 	NUMBER = "number" # token pro cislo, jeho hodnotou bude hodnota cisla
+	STRING = "string"
 	IDENT = "ident" # token pro identifikator, jeho hodnotou bude retezec s identifikatorem
 	# tohle jsou jen ukazky operatoru a klicovych slov, vase budou vypadat podle toho, jak bude vypadat vas jazyk
 
@@ -57,6 +58,9 @@ class Lexer:
 	OP_BRACKETS_RIGHT = "]"
 	OP_COMMA = ","
 	OP_SEMICOLON = ";"
+
+	OP_QUOTATION_MARK = "\""
+	OP_APOSTROPHE = "'"
 
 
 	
@@ -240,6 +244,17 @@ class Lexer:
 			self.popChar()
 		self.addToken(Lexer.NUMBER, value, self.currentline)
 
+	def parseString(self, zacatek):
+		""" Naparsuje string """
+		value = ""
+		while (self.topChar()!=zacatek):
+			value += self.topChar()
+			self.popChar()
+		self.popChar()
+		self.addToken(Lexer.STRING, value, self.currentline)
+
+
+
 	
 	def parseIdentifierOrKeyword(self):
 		"""
@@ -419,6 +434,17 @@ class Lexer:
 			self.popChar()
 			while self.topChar() != "\n":
 				self.popChar()
+
+		elif (c == "\""): # string
+			self.popChar()
+			self.parseString("\"")
+
+		elif (c == "'"): # druhá varianta stringu
+			self.popChar()
+			self.parseString("'")
+
+
+
 		elif (c == '\0'):
 			self.addToken(Lexer._EOF)
 			self.skonciuzkurva = 1 # aby to už kurva skončilo, nějak nefungovalo to počítadlo pozice a nechtělo se mi to říkat

@@ -93,7 +93,7 @@ class BinaryOperator:
 				else:
 					return Literal(float(l) + float(r) )
 			else:
-				return l + r
+				return str(l) + str(r)
 
 		elif self.operator == le.OP_SUBSTRACT:
 			if ( self.isfloat(l) and self.isfloat(r) ): #jsou to čísla, vezme to i float

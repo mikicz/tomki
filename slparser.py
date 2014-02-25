@@ -150,11 +150,15 @@ class Parser:
 		return lhs
 
 	def parseF(self):
-		""" F ::= number | ident [ OP_BRACKETS_LEFT E OP_BRACKETS_RIGHT ] | FCALL | OP_PARENTHESES_LEFT E OP_PARENTHESES_RIGHT| FIELD
+		""" F ::= number | ident [ OP_BRACKETS_LEFT E OP_BRACKETS_RIGHT ] | FCALL | OP_PARENTHESES_LEFT E OP_PARENTHESES_RIGHT| FIELD | string
 		
 		Faktorem vyrazu pak je bud cislo (literal), nebo nazev promenne, v tomto pripade se vzdycky jedna o cteni promenne a nebo znova cely vyraz v zavorkach. 
 		"""
 		if (self.top()[0] == Lexer.NUMBER):
+			value = self.pop()[1]
+			return Literal(value)
+
+		elif (self.top()[0] == Lexer.STRING):
 			value = self.pop()[1]
 			return Literal(value)
 
