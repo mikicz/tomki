@@ -79,7 +79,10 @@ class Parser:
 			return self.parseFunctionCall()
 		variableName = self.pop(Lexer.IDENT)[1]
 		self.pop(Lexer.OP_ASSIGN)
-		rhs = self.parseExpression()
+		if (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
+			rhs = self.parseFunctionCall()
+		else:
+			rhs = self.parseExpression()
 		return VariableWrite(variableName, rhs)
 
 	def parseExpression(self):
@@ -251,7 +254,7 @@ class Parser:
 
 	def parseFunctionCall(self):
 		""" FCALL ::= ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT """
-		functionName=self.pop(Lexer.IDENT)
+		functionName=FunctionIdent(self.pop(Lexer.IDENT)[1])
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		arrgs=[]
 		while(self.top()[0] != Lexer.OP_PARENTHESES_RIGHT): 
@@ -264,7 +267,7 @@ class Parser:
 	def parseFunction(self):
 		""" FDEF :== KW_FUNCTION ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT BLOCK """
 		self.pop(Lexer.KW_FUNCTION)
-		functionName=self.pop(Lexer.IDENT)
+		functionName=FunctionIdent(self.pop(Lexer.IDENT)[1])
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		arrgs=[]
 		while(self.top()[0] == Lexer.IDENT): 

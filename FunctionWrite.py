@@ -5,16 +5,16 @@ class FunctionWrite:
 	"""
 
 	def __init__(self, name, arrgs, block):
-		self.name = name
+		self.name = name #AST FunctionIdent
 		self.arrgs = arrgs
 		self.block = block
 		self.type = "FunctionWrite"
 
 	def __str__(self):
 		if (self.arrgs == []):
-			return "function = %s () %s" % (self.name, self.block)
+			return "function %s () %s" % (self.name, self.block)
 		else:
-			a = "function = %s (" % (self.name[1],)
+			a = "function %s (" % (self.name,)
 			x=1
 			for y in self.arrgs:
 				if x == 1:
@@ -26,4 +26,4 @@ class FunctionWrite:
 			return a
 
 	def run(self, frame, ff):
-		ff.add(self.name, self.arrgs, self.block)
+		ff.add(self.name.run(frame, ff), self.arrgs, self.block)

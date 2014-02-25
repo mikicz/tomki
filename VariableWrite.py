@@ -10,4 +10,4 @@ class VariableWrite:
 		return "%s = %s" % (self.variableName, self.value)
 
 	def run(self,frame,ff):
-		return frame.set(self.variableName,self.value)
+		return frame.set(self.variableName,self.value, ff)

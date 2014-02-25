@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from lexer import Lexer
+from Literal import Literal
+
 class BinaryOperator:
 	""" Binary operator. 
 

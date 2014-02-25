@@ -17,7 +17,7 @@ def testParser():
 				c = a + b;
 				return c;
 			};
-			secti(1, 3);
+			x = secti(1, 3);
 			print (x);"""
 	#s = """ a = 5; b = a + 3;"""
 	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru

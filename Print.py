@@ -8,4 +8,4 @@ class Print:
 		return "print ( %s )" % (self.what)
 
 	def run(self, frame,ff):
-		print self.what.run(frame,None)
+		print self.what.run(frame,ff)

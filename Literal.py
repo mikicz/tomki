@@ -3,7 +3,6 @@ class Literal:
 	""" Literal (tedy jakakoli konstanta, cislo). """
 	def __init__(self, value):
 		self.value = value
-		self.literal = True
 		self.type = "Literal"
 
 	def __str__(self):

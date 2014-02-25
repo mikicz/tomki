@@ -24,12 +24,12 @@ class If:
 
 	def run(self, frame,ff):
 		self.istrue = 0
-		if self.condition.run(frame,None).run(frame,None) == True: #condition.run vrací Literal True nbo False
+		if self.condition.run(frame,ff).run(frame,ff) == True: #condition.run vrací Literal True nbo False
 			self.istrue = 1
-			self.trueCase.run(frame,None)
+			self.trueCase.run(frame,ff)
 		for i in self.elifs:
-			if i[0].run(frame,None).frame(frame,None) == True:
+			if i[0].run(frame,ff).frame(frame,None) == True:
 				self.istrue = 1
-				i[1].run(frame,None)
+				i[1].run(frame,ff)
 		if self.istrue==0:
-			self.falseCase.run(frame,None)
+			self.falseCase.run(frame,ff)

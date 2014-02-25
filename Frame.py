@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-
+from Literal import Literal
 class Frame:
 
 	def __init__(self,parent):
 		self.locals =  {}
 		self.parent = parent
 
-	def set (self, name, value):
-		if hasattr(value, 'literal'): #uloží se jenom literal, zbytek se nejdřív pustí, aby z toho vyšel literal
+	def set (self, name, value, ff):
+		if value.type=="Literal": #uloží se jenom literal, zbytek se nejdřív pustí, aby z toho vyšel literal
 			self.locals[name] = value
 		else:
-			self.locals[name] = value.run(self, None)
+			self.locals[name] = Literal(value.run(self, ff))
 
 	def get (self, name):
 		if (name in self.locals):

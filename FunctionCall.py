@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from Frame import Frame
+from VariableWrite import VariableWrite
+
 class FunctionCall:
 	def __init__(self, name, arrgs):
 		self.name = name
@@ -7,9 +10,9 @@ class FunctionCall:
 
 	def __str__(self):
 		if (self.arrgs == []):
-			return " %s ()" % (self.name[1],)
+			return " %s ()" % (self.name,)
 		else:
-			a = "%s ("  % (self.name[1],)
+			a = "%s ("  % (self.name,)
 			x=1
 			for y in self.arrgs:
 				if x == 1:
@@ -21,7 +24,7 @@ class FunctionCall:
 			return a
 
 	def run (self, frame, ff):
-		(arrrgumenty, block) = ff.get(self.name)
+		(arrrgumenty, block) = ff.get(self.name.run(frame, ff))
 		novyframe=Frame(frame)
 		x=0
 		for i in arrrgumenty:

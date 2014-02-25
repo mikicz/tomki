@@ -13,5 +13,5 @@ class While:
 		return "while (%s) %s" % (self.condition, self.block)
 
 	def run(self, frame,ff):
-		while self.condition.run(frame,None) == True:
-			self.block.run(frame,None)
+		while self.condition.run(frame,ff) == True:
+			self.block.run(frame,ff)
