@@ -20,7 +20,7 @@ CONDITION ::= KW_IF '(' E ')' BLOCK { KW_ELIF '(' E ')' BLOCK } [ KW_ELSE BLOCK 
 
 LOOP ::= KW_WHILE '(' E ')' BLOCK | KW_FOR ident KW_IN ( ident | FCALL | ARRAY) BLOCK
 
-	# definice funkce např mergesort = function (pole)
+
 FDEF :== KW_FUNCTION ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT BLOCK
 
 E ::= E1 [ OP_ASSIGN E1 ] #aka ASSIGNMENT ::= ident op_assign EXPRESSION
@@ -31,9 +31,11 @@ E4 ::= E5 { ( OP_BIGGER | OP_SMALLER | OP_BIGGEROREQUAL | OP_SMALLEROREQUAL ) E4
 E5 ::= E6 { ( OP_ADD | OP_SUBSTRACT ) E5 }
 E6 ::= E7 { ( OP_MULTIPLY | OP_MOCNIT | OP_FLOORDIVISION | OP_REMAINDER ) E6 }
 E7 ::= [ OP_SUBSTRACT ] F
-F ::= number | ident [ OP_BRACKETS_LEFT [ E ]{, E } OP_BRACKETS_RIGHT ] | FCALL | OP_PARENTHESES_LEFT E OP_PARENTHESES_RIGHT| ARRAY
+F ::= number | ident [ OP_BRACKETS_LEFT [ E ]{, E } OP_BRACKETS_RIGHT ] | FCALL | OP_PARENTHESES_LEFT E OP_PARENTHESES_RIGHT| ARRAY | STRING
 
-ARRAY :== OP_BRACKETS_LEFT E { ,E } OP_BRACKETS_RIGHT # definice pole (např. když píšu "x = [2, 4]")
+STRING ::== """ fuckingeverything """ | "'" fucking everything "'"
+
+ARRAY ::= OP_BRACKETS_LEFT E { ,E } OP_BRACKETS_RIGHT # definice pole (např. když píšu "x = [2, 4]")
 
 FCALL ::= ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT
 
