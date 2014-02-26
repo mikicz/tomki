@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from math import floor
 from lexer import Lexer
+import sys
+sys.path.append('ast/')
 
 from Frame import Frame
 from FunctionFrame import FunctionFrame
@@ -15,14 +17,12 @@ from For import For
 from FunctionWrite import FunctionWrite
 from FunctionCall import FunctionCall
 from ArrgIdent import ArrgIdent
-from Array import Array
 from Print import Print 
 from Return import Return
 from FunctionIdent import FunctionIdent
 from Append import Append
 from Insert import Insert
 from Pop import Pop
-from Array import Array
 
 
 

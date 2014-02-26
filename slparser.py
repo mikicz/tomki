@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from ast import *
 from lexer import Lexer
+import sys
+sys.path.append('ast/')
+from ast import *
 
 class Parser:
 	"""
@@ -80,11 +83,15 @@ class Parser:
 		Ulozeni hodnoty do promenne vypada tak, ze na leve strane je identifikator promenne, hned za nim je operator prirazeni a za nim je vyraz, ktery vypocitava hodnotu, kterou do promenne chci ulozit. Tohle je zjednodusena verze prirazeni, viz komentare k hodine. 
 		"""
 		
-		if (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
+		if (self.top()[0] == Lexer.KW_POP):
+			return self.parsePop()
+		elif (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
 			return self.parseFunctionCall()
 		variableName = self.pop(Lexer.IDENT)[1]
 		self.pop(Lexer.OP_ASSIGN)
-		if (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
+		if (self.top()[0] == Lexer.KW_POP):
+			rhs = self.parsePop()
+		elif (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
 			rhs = self.parseFunctionCall()
 		else:
 			rhs = self.parseExpression()
@@ -178,7 +185,7 @@ class Parser:
 			self.pop(Lexer.OP_BRACKETS_RIGHT)
 			return VariableRead(variableName, indexValue)
 
-		elif (self.top()[0] == Lexer.KW_POP):
+		elif (self.top()[0] == Lexer.KW_POP): 
 			return self.parsePop()
 
 		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
@@ -303,7 +310,7 @@ class Parser:
 			if self.top()[0] == Lexer.OP_COMMA:
 				self.pop(Lexer.OP_COMMA)
 		self.pop(Lexer.OP_BRACKETS_RIGHT)  #For every upvote this gets I will stroke me penis once. Let's wear the skin off! 
-		return Array(polozkypole)
+		return Literal(polozkypole)
 
 	def parseAppend(self):
 		""" APPEND :== KW_APPEND OP_PARENTHESES_LEFT ident OP_COMMA E OP_PARENTHESES_RIGHT """
