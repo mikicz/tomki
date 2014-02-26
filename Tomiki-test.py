@@ -20,8 +20,11 @@ def testParser():
 		function quicksort(seznam)
 			{
 				print "jsem ve funkci";
-				if (len(seznam) <= 1)
+				x = len(seznam);
+				print x;
+				if (x == 1)
 					{
+						print "this fucking thing";
 						return seznam;
 					}
 				else
