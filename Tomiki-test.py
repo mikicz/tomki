@@ -17,9 +17,9 @@ def testLexer():
 
 def testParser():
 	s = """
-		a=[1,2,3];
-		b = pop(a,0); 
-		print b;	"""
+		a = [1,2];
+		print len(a);
+			"""
 	#s = """ a = 5; b = a + 3;"""
 	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
 	l.analyzeString(s) # timhle mu reknete, aby naparsoval string, ktery jste napsali

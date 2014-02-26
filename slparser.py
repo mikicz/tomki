@@ -64,6 +64,8 @@ class Parser:
 			return self.parseAppend()
 		elif (self.top()[0] == Lexer.KW_INSERT): #insert
 			return self.parseInsert()
+		elif (self.top()[0] == Lexer.KW_LEN): #insert
+			return self.parseLen()
 
 		elif (self.top()[0] == Lexer.OP_BRACES_LEFT):
 			return self.parseBlock(thisisafunction=True)
@@ -82,15 +84,20 @@ class Parser:
 	   
 		Ulozeni hodnoty do promenne vypada tak, ze na leve strane je identifikator promenne, hned za nim je operator prirazeni a za nim je vyraz, ktery vypocitava hodnotu, kterou do promenne chci ulozit. Tohle je zjednodusena verze prirazeni, viz komentare k hodine. 
 		"""
-		
 		if (self.top()[0] == Lexer.KW_POP):
 			return self.parsePop()
+		elif (self.top()[0] == Lexer.KW_LEN):
+			return self.parseLen()
 		elif (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
 			return self.parseFunctionCall()
+
+
 		variableName = self.pop(Lexer.IDENT)[1]
 		self.pop(Lexer.OP_ASSIGN)
 		if (self.top()[0] == Lexer.KW_POP):
 			rhs = self.parsePop()
+		elif (self.top()[0] == Lexer.KW_LEN):
+			rhs = self.parseLen()
 		elif (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
 			rhs = self.parseFunctionCall()
 		else:
@@ -187,6 +194,9 @@ class Parser:
 
 		elif (self.top()[0] == Lexer.KW_POP): 
 			return self.parsePop()
+
+		elif (self.top()[0] == Lexer.KW_LEN): 
+			return self.parseLen()
 
 		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
 			return self.parseFunctionCall()
@@ -343,6 +353,13 @@ class Parser:
 		index = self.parseExpression()
 		self.pop(Lexer.OP_PARENTHESES_RIGHT)
 		return Pop(array, index)
+
+	def parseLen(self):
+		self.pop(Lexer.KW_LEN)
+		self.pop(Lexer.OP_PARENTHESES_LEFT)
+		ident = self.pop(Lexer.IDENT)[1]
+		self.pop(Lexer.OP_PARENTHESES_RIGHT)
+		return Len(ident)
 
 
 	def parsePrint(self):

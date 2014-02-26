@@ -6,7 +6,12 @@ class Literal:
 		self.type = "Literal"
 
 	def __str__(self):
-		return str(self.value)
+		try:
+			a = self.value[0]
+			return "Je tady pole a nefunguje mi kurva debilni __str__"
+
+		except:
+			return str(self.value)
 
 	def run(self, frame,ff, index=None):
 		if index!=None:

@@ -6,6 +6,7 @@ class Insert:
 		self.value = value
 		self.index = index
 		self.type = "Insert"
+	
 	def __str__(self):
 		return "insert (%s, %s, %s)" % (self.ident, self.value, self.index)
 

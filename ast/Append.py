@@ -5,6 +5,7 @@ class Append:
 		self.ident = ident
 		self.value = value
 		self.type = "Append"
+
 	def __str__(self):
 		return "append (%s, %s)" % (self.ident, self.value)
 

@@ -11,6 +11,7 @@ class Frame:
 			self.locals[name] = value
 		else:
 			self.locals[name] = Literal(value.run(self, ff))
+		return Literal(True)
 
 	def get (self, name):
 		if (name in self.locals):
