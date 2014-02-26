@@ -18,4 +18,4 @@ class Frame:
 			return self.locals[name]
 		if (self.parent == None): #pokud není rodič, nemůžu se podívat nahoru a tím pádem proměná neexistuje
 			raise BaseException("Proměnná "+str(name)+" neexistuje")
-		return self.parent.get(self.name)
+		return self.parent.get(name)
