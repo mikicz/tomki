@@ -7,7 +7,7 @@ class Frame:
 		self.parent = parent
 
 	def set (self, name, value, ff):
-		if value.type=="Literal": #uloží se jenom literal, zbytek se nejdřív pustí, aby z toho vyšel literal
+		if value.type=="Literal" or value.type=="Array": #uloží se jenom literal, zbytek se nejdřív pustí, aby z toho vyšel literal
 			self.locals[name] = value
 		else:
 			self.locals[name] = Literal(value.run(self, ff))

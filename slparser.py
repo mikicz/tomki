@@ -63,7 +63,7 @@ class Parser:
 			return self.parseInsert()
 
 		elif (self.top()[0] == Lexer.OP_BRACES_LEFT):
-			return self.parseBlock()
+			return self.parseBlock(thisisafunction=True)
 		elif (self.top()[0] == Lexer.KW_PRINT):
 			return self.parsePrint()
 		elif (self.top()[0] == Lexer.KW_RETURN):
@@ -194,7 +194,7 @@ class Parser:
 			self.pop(Lexer.OP_PARENTHESES_RIGHT)
 			return result 
 
-	def parseIfStatement(self):
+	def parseIfStatement(self, thisisafunction=False):
 		""" 
 		CONDITION ::= KW_IF '(' E ')' BLOCK { KW_ELIF '(' E ')' BLOCK } [ KW_ELSE BLOCK ]
 	
@@ -204,7 +204,7 @@ class Parser:
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		condition = self.parseExpression()
 		self.pop(Lexer.OP_PARENTHESES_RIGHT)
-		trueCase = self.parseBlock()
+		trueCase = self.parseBlock(thisisafunction=True)
 
 		elifs = []
 		while (self.top()[0] == Lexer.KW_ELIF):
@@ -212,19 +212,19 @@ class Parser:
 			self.pop(Lexer.OP_PARENTHESES_LEFT)
 			x = self.parseExpression() #podmínka 
 			self.pop(Lexer.OP_PARENTHESES_RIGHT)
-			y = self.parseBlock() #blok
+			y = self.parseBlock(thisisafunction=True) #blok
 			elifs.append([x,y])
 
 		if (self.top()[0] == Lexer.KW_ELSE): # za elify muze byt ještě else
 			self.pop()
-			falseCase = self.parseBlock()
+			falseCase = self.parseBlock(thisisafunction=True)
 		else: # to aby se nam chybeji vetev sprave zobrazila jako {}
 			falseCase = Block() 
 		
 		# cokoli ostatniho by bylo za ifem, neni soucasti ifu
 		return If(condition, trueCase,elifs, falseCase)
 
-	def parseWhile(self):
+	def parseWhile(self,thisisafunction=False):
 		"""
 		KW_WHILE '(' E ')' BLOCK
 		"""
@@ -233,11 +233,11 @@ class Parser:
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		condition = self.parseExpression()
 		self.pop(Lexer.OP_PARENTHESES_RIGHT)
-		block = self.parseBlock()
+		block = self.parseBlock(thisisafunction=True)
 
 		return While(condition, block)
 
-	def parseFor(self):
+	def parseFor(self,thisisafunction=False):
 		"""
 		KW_FOR ident KW_IN ( ident | FCALL | FIELD) BLOCK
 		"""
@@ -251,7 +251,7 @@ class Parser:
 			array = VariableRead(self.pop(Lexer.IDENT)[1])
 		elif ( self.top()[0] == Lexer.OP_BRACKETS_LEFT ):
 			array = self.parseArray()
-		block = self.parseBlock()
+		block = self.parseBlock(thisisafunction=True)
 		return For(var,array,block)
 
 	def parseBlock(self, thisisafunction=False):
