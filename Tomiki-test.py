@@ -19,33 +19,40 @@ def testParser():
 	s = """
 		function quicksort(seznam)
 			{
+				print "jsem ve funkci";
 				if (len(seznam) <= 1)
 					{
 						return seznam;
-					};
-				pivot = pop(seznam,0);
-				mali = [];
-				velci = [];
-				for prvek in seznam
+					}
+				else
 					{
-						if (prvek<pivot)
+						pivot = pop(seznam,0);
+						mali = [];
+						velci = [];
+						for prvek in seznam
 							{
-								append(mali,prvek);
-							}
-						else
-							{
-								append(velci,prvek);
+								if (prvek<pivot)
+									{
+										append(mali,prvek);
+									}
+								else
+									{
+										append(velci,prvek);
+									};
 							};
+						vystup1 = quicksort(mali);
+						vystup2 = quicksort(velci);
+						vystup = vystup1+[pivot]+vystup2;
+						return vystup;
 					};
-				vystup1 = quicksort(mali);
-				vystup2 = quicksort(velci);
-				vystup = vystup1+[pivot]+vystup2;
-				return vystup;
+				
 
 
 
 			};
-		a = [758,796,7,875,745,1,5,5,5,65,46,56,987,8765,46];
+		print "vytvarim a";
+		a = [758,796,7];
+		print "mam a, spoustim quicksort";
 		b = quicksort(a);
 		for i in b
 			{

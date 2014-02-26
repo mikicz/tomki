@@ -3,6 +3,8 @@ from Frame import Frame
 from VariableWrite import VariableWrite
 from Literal import Literal
 from copy import copy
+from Print import Print
+from VariableRead import VariableRead
 class For:
 	""" pamatuje si kam se má ukládat jednotlivý prvek seznamu, seznam a block
 	KW_FOR ident KW_IN ( ident | FCALL | FIELD) BLOCK
@@ -24,5 +26,6 @@ class For:
 		for prvek in array:
 			novyframe=Frame(frame)
 			localblock = copy (self.block) #aby to neodkazovalo na stejný blok
+			localblock.add_zacatek(Print(VariableRead(variableName)))
 			localblock.add_zacatek(VariableWrite(variableName,prvek))
 			localblock.run(novyframe,ff)
