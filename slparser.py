@@ -317,23 +317,23 @@ class Parser:
 		""" INSERT :== KW_INSERT OP_PARENTHESES_LEFT ident OP_COMMA E OP_COMMA E OP_PARENTHESES """
 		self.pop(Lexer.KW_INSERT)
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
-		array = self.pop(Lexer.IDENT)
+		array = self.pop(Lexer.IDENT)[1]
 		self.pop(Lexer.OP_COMMA)
 		value = self.parseExpression()
 		self.pop(Lexer.OP_COMMA)
 		index = self.parseExpression()
 		self.pop(Lexer.OP_PARENTHESES_RIGHT)
-		return Insert(ident, value, index)
+		return Insert(array, value, index)
 
 	def parsePop(self):
 		""" POP :== KW_POP OP_PARENTHESES_LEFT ident OP_COMMA E OP_PARENTHESES_RIGHT """
-		self.pop(Lexer.KW_APPEND)
+		self.pop(Lexer.KW_POP)
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
-		array = self.pop(Lexer.IDENT)
+		array = self.pop(Lexer.IDENT)[1]
 		self.pop(Lexer.OP_COMMA)
 		index = self.parseExpression()
 		self.pop(Lexer.OP_PARENTHESES_RIGHT)
-		return Pop(ident, index)
+		return Pop(array, index)
 
 
 	def parsePrint(self):

@@ -9,7 +9,6 @@ class Append:
 		return "append (%s, %s)" % (self.ident, self.value)
 
 	def run(self, frame, ff):
-		print "získávám array"
 		self.array = frame.get(self.ident).run(frame,ff)
 		self.array.append(self.value)
 		return frame.set(self.ident,Literal(self.array), ff)

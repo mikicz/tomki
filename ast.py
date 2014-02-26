@@ -20,6 +20,8 @@ from Print import Print
 from Return import Return
 from FunctionIdent import FunctionIdent
 from Append import Append
+from Insert import Insert
+from Pop import Pop
 
 
 
