@@ -18,7 +18,7 @@ def testLexer():
 def testParser():
 	s = """
 		a = [1,2];
-		print len(a);
+		for i in a {print i;};
 			"""
 	#s = """ a = 5; b = a + 3;"""
 	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru

@@ -68,7 +68,7 @@ class Parser:
 			return self.parseLen()
 
 		elif (self.top()[0] == Lexer.OP_BRACES_LEFT):
-			return self.parseBlock(thisisafunction=True)
+			return self.parseBlock(thisisafunction=thisisafunction)
 		elif (self.top()[0] == Lexer.KW_PRINT):
 			return self.parsePrint()
 		elif (self.top()[0] == Lexer.KW_RETURN):
@@ -221,7 +221,7 @@ class Parser:
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		condition = self.parseExpression()
 		self.pop(Lexer.OP_PARENTHESES_RIGHT)
-		trueCase = self.parseBlock(thisisafunction=True)
+		trueCase = self.parseBlock(thisisafunction=thisisafunction)
 
 		elifs = []
 		while (self.top()[0] == Lexer.KW_ELIF):
@@ -229,12 +229,12 @@ class Parser:
 			self.pop(Lexer.OP_PARENTHESES_LEFT)
 			x = self.parseExpression() #podmínka 
 			self.pop(Lexer.OP_PARENTHESES_RIGHT)
-			y = self.parseBlock(thisisafunction=True) #blok
+			y = self.parseBlock(thisisafunction=thisisafunction) #blok
 			elifs.append([x,y])
 
 		if (self.top()[0] == Lexer.KW_ELSE): # za elify muze byt ještě else
 			self.pop()
-			falseCase = self.parseBlock(thisisafunction=True)
+			falseCase = self.parseBlock(thisisafunction=thisisafunction)
 		else: # to aby se nam chybeji vetev sprave zobrazila jako {}
 			falseCase = Block() 
 		
@@ -250,7 +250,7 @@ class Parser:
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		condition = self.parseExpression()
 		self.pop(Lexer.OP_PARENTHESES_RIGHT)
-		block = self.parseBlock(thisisafunction=True)
+		block = self.parseBlock(thisisafunction=thisisafunction)
 
 		return While(condition, block)
 
@@ -260,15 +260,15 @@ class Parser:
 		"""
 
 		self.pop(Lexer.KW_FOR)
-		var = self.parseF()
-		self.pop(Lexer.KW_In)
+		var = ForIdent(self.pop(Lexer.IDENT)[1])
+		self.pop(Lexer.KW_IN)
 		if ( self.top()[0] == Lexer.IDENT and self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT ):
 			array = self.parseFunctionCall() #function call
 		elif ( self.top()[0] == Lexer.IDENT ):
 			array = VariableRead(self.pop(Lexer.IDENT)[1])
 		elif ( self.top()[0] == Lexer.OP_BRACKETS_LEFT ):
 			array = self.parseArray()
-		block = self.parseBlock(thisisafunction=True)
+		block = self.parseBlock(thisisafunction=thisisafunction)
 		return For(var,array,block)
 
 	def parseBlock(self, thisisafunction=False):
@@ -375,4 +375,5 @@ class Parser:
 	def parseReturn(self):
 		self.pop(Lexer.KW_RETURN)
 		return Return(self.parseExpression())
+
 
