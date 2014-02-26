@@ -17,41 +17,8 @@ def testLexer():
 
 def testParser():
 	s = """
-		function quicksort(seznam)
-			{
-				if (len(seznam) <= 1)
-					{
-						return seznam;
-					};
-				pivot = pop(seznam,0);
-				mali = [];
-				velci = [];
-				for prvek in seznam
-					{
-						if (prvek<pivot)
-							{
-								append(mali,prvek);
-							}
-						else
-							{
-								append(velci,prvek);
-							};
-					};
-				vystup1 = quicksort(mali);
-				vystup2 = quicksort(velci);
-				vystup = vystup1+[pivot]+vystup2;
-				return vystup;
-
-
-
-			};
-		a = [758,796,7,875,745,1,5,5,5,65,46,56,987,8765,46];
-		b = quicksort(a);
-		for i in b
-			{
-				c = i + " "
-				print c;
-			};
+		a = [1,2];
+		for i in a {print i;};
 			"""
 	#s = """ a = 5; b = a + 3;"""
 	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru

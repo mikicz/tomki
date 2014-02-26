@@ -52,16 +52,13 @@ class Parser:
 		Statement je bud if, nebo zapis promenne. 
 		"""
 		if (self.top()[0] == Lexer.KW_IF): #podmínka
-			return self.parseIfStatement(thisisafunction=thisisafunction)
+			return self.parseIfStatement()
 		elif (self.top()[0] == Lexer.KW_WHILE): #while
-			return self.parseWhile(thisisafunction=thisisafunction)
+			return self.parseWhile()
 		elif (self.top()[0] == Lexer.KW_FOR): #for
-			return self.parseFor(thisisafunction=thisisafunction)
+			return self.parseFor()
 		elif (self.top()[0] == Lexer.KW_FUNCTION): #funkce
-			if thisisafunction == True:
-				raise BaseException("Nemuzes definovat funkci ve funkci")
-			else:
-				return self.parseFunction()
+			return self.parseFunction()
 
 		elif (self.top()[0] == Lexer.KW_APPEND): #append
 			return self.parseAppend()
