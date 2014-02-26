@@ -92,6 +92,8 @@ class BinaryOperator:
 					return Literal(int(l) + int(r) )
 				else:
 					return Literal(float(l) + float(r) )
+			elif (isinstance(l, list) and isinstance(r, list)):
+				return l+r
 			else:
 				return str(l) + str(r)
 
