@@ -57,8 +57,6 @@ class Parser:
 		elif (self.top()[0] == Lexer.KW_FUNCTION): #funkce
 			return self.parseFunction()
 
-		elif (self.top()[0] == Lexer.KW_POP): #pop v arrayi
-			return self.parsePop()
 		elif (self.top()[0] == Lexer.KW_APPEND): #append
 			return self.parseAppend()
 		elif (self.top()[0] == Lexer.KW_INSERT): #insert
@@ -180,11 +178,15 @@ class Parser:
 			self.pop(Lexer.OP_BRACKETS_RIGHT)
 			return VariableRead(variableName, indexValue)
 
+		elif (self.top()[0] == Lexer.KW_POP):
+			return self.parsePop()
+
 		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
 			return self.parseFunctionCall()
 
 		elif (self.top()[0] == Lexer.OP_BRACKETS_LEFT):
 			return self.parseArray()
+
 
 		else:
 			self.pop(Lexer.OP_PARENTHESES_LEFT)

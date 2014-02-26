@@ -11,4 +11,5 @@ class Pop:
 	def run(self, frame, ff):
 		self.array = frame.get(self.ident).run(frame,ff)
 		self.value = self.array.pop(self.index.run(frame, ff))
-		return frame.set(self.ident,Literal(self.array), ff)
+		frame.set(self.ident,Literal(self.array), ff)
+		return self.value.run(frame,ff)
