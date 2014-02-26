@@ -32,6 +32,10 @@ class Lexer:
 	KW_FUNCTION = "function"
 	KW_PRINT = "print"
 
+	KW_POP = "pop"
+	KW_APPEND = "append"
+	KW_INSERT = "insert"
+
 	#operace
 	OP_ADD = "+" # operator scitani
 	OP_EQUAL = "==" # operator porovnani

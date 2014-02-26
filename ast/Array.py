@@ -8,9 +8,9 @@ class Array:
 		a = "["
 		for i in self.polozkypole:
 			if (a == "["):
-				a += i
+				a += i.__str__()
 			else:
-				a += "," + i
+				a += "," + i.__str__()
 		a += "]"
 		return a
 

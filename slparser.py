@@ -11,7 +11,6 @@ class Parser:
 	def __init__(self, lexer):
 		""" Zalozi parser a zapamatuje si lexer, se kterym bude pracovat. """
 		self.lexer = lexer
-		pass
 
 
 	def pop(self, type = None):
@@ -57,6 +56,14 @@ class Parser:
 			return self.parseFor()
 		elif (self.top()[0] == Lexer.KW_FUNCTION): #funkce
 			return self.parseFunction()
+
+		elif (self.top()[0] == Lexer.KW_POP): #pop v arrayi
+			return self.parsePop()
+		elif (self.top()[0] == Lexer.KW_APPEND): #append
+			return self.parseAppend()
+		elif (self.top()[0] == Lexer.KW_INSERT): #insert
+			return self.parseInsert()
+
 		elif (self.top()[0] == Lexer.OP_BRACES_LEFT):
 			return self.parseBlock()
 		elif (self.top()[0] == Lexer.KW_PRINT):
@@ -167,7 +174,11 @@ class Parser:
 			return VariableRead(variableName)
 
 		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_BRACKETS_LEFT):
-			pass
+			variableName = self.pop()[1]
+			self.pop(Lexer.OP_BRACKETS_LEFT)
+			indexValue = self.parseExpression()
+			self.pop(Lexer.OP_BRACKETS_RIGHT)
+			return VariableRead(variableName, indexValue)
 			#tady bude čtení proměných, co jsou seznamy
 
 		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
@@ -293,6 +304,19 @@ class Parser:
 		self.pop(Lexer.OP_BRACKETS_RIGHT)  #For every upvote this gets I will stroke me penis once. Let's wear the skin off! 
 		return Array(polozkypole)
 
+	def parseAppend(self):
+		""" APPEND :== KW_APPEND OP_PARENTHESES_LEFT ident OP_COMMA E OP_PARENTHESES_RIGHT """
+		pass
+
+	def parseInsert(self):
+		""" INSERT :== KW_INSERT OP_PARENTHESES_LEFT ident OP_COMMA E OP_COMMA E OP_PARENTHESES """
+		pass
+
+	def parsePop(self):
+		""" POP :== KW_POP OP_PARENTHESES_LEFT ident OP_COMMA E OP_PARENTHESES_RIGHT """
+		pass
+
+
 	def parsePrint(self):
 		self.pop(Lexer.KW_PRINT)
 		if (self.top()[0] == Lexer.OP_PARENTHESES_LEFT):
@@ -306,5 +330,4 @@ class Parser:
 	def parseReturn(self):
 		self.pop(Lexer.KW_RETURN)
 		return Return(self.parseExpression())
-
 

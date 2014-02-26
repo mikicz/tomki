@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+import sys
+sys.path.append('ast/')
 from lexer import Lexer
 # jmenuje se slparser (Simple Language Parser), aby se netriskal s pythonim modulem parser
 from slparser import Parser
@@ -14,11 +17,7 @@ def testLexer():
 
 def testParser():
 	s = """
-		x = 'laskjflasdfj asfj ^˘řěščř {dsgfsd][đĐ gflasdhfsvféíěšéčrnjycv,. .,v';
-
-		y = 1;
-		z = x + y;
-		print z;
+		x = [2,3];
 	"""
 	#s = """ a = 5; b = a + 3;"""
 	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
