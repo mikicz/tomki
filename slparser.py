@@ -173,13 +173,12 @@ class Parser:
 			variableName = self.pop()[1]
 			return VariableRead(variableName)
 
-		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_BRACKETS_LEFT):
+		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_BRACKETS_LEFT): #Čtení hodnoty v seznamu
 			variableName = self.pop()[1]
 			self.pop(Lexer.OP_BRACKETS_LEFT)
 			indexValue = self.parseExpression()
 			self.pop(Lexer.OP_BRACKETS_RIGHT)
 			return VariableRead(variableName, indexValue)
-			#tady bude čtení proměných, co jsou seznamy
 
 		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
 			return self.parseFunctionCall()
@@ -306,15 +305,35 @@ class Parser:
 
 	def parseAppend(self):
 		""" APPEND :== KW_APPEND OP_PARENTHESES_LEFT ident OP_COMMA E OP_PARENTHESES_RIGHT """
-		pass
+		self.pop(Lexer.KW_APPEND)
+		self.pop(Lexer.OP_PARENTHESES_LEFT)
+		array = self.pop(Lexer.IDENT)[1]
+		self.pop(Lexer.OP_COMMA)
+		value = self.parseExpression()
+		self.pop(Lexer.OP_PARENTHESES_RIGHT)
+		return Append(array, value)
 
 	def parseInsert(self):
 		""" INSERT :== KW_INSERT OP_PARENTHESES_LEFT ident OP_COMMA E OP_COMMA E OP_PARENTHESES """
-		pass
+		self.pop(Lexer.KW_INSERT)
+		self.pop(Lexer.OP_PARENTHESES_LEFT)
+		array = self.pop(Lexer.IDENT)
+		self.pop(Lexer.OP_COMMA)
+		value = self.parseExpression()
+		self.pop(Lexer.OP_COMMA)
+		index = self.parseExpression()
+		self.pop(Lexer.OP_PARENTHESES_RIGHT)
+		return Insert(ident, value, index)
 
 	def parsePop(self):
 		""" POP :== KW_POP OP_PARENTHESES_LEFT ident OP_COMMA E OP_PARENTHESES_RIGHT """
-		pass
+		self.pop(Lexer.KW_APPEND)
+		self.pop(Lexer.OP_PARENTHESES_LEFT)
+		array = self.pop(Lexer.IDENT)
+		self.pop(Lexer.OP_COMMA)
+		index = self.parseExpression()
+		self.pop(Lexer.OP_PARENTHESES_RIGHT)
+		return Pop(ident, index)
 
 
 	def parsePrint(self):

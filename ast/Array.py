@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Literal import Literal
 class Array:
 	def __init__(self,polozkypole):
 		self.polozkypole = polozkypole
@@ -15,4 +16,8 @@ class Array:
 		return a
 
 	def run(self, frame, ff):
-		return self.polozkypole
+		self.spustenepole = []
+		for i in self.polozkypole:
+			i.run(frame, ff)
+			self.spustenepole.append(i)
+		return Literal(self.spustenepole)

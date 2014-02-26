@@ -16,5 +16,5 @@ class Frame:
 		if (name in self.locals):
 			return self.locals[name]
 		if (self.parent == None): #pokud není rodič, nemůžu se podívat nahoru a tím pádem proměná neexistuje
-			raise
+			raise BaseException("Proměnná "+str(name)+" neexistuje")
 		return self.parent.get(self.name)

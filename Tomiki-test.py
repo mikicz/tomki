@@ -9,7 +9,7 @@ from ast import *
 
 def testLexer():
 	""" Ukazka pouziti lexeru. """
-	s = " if (a == 4) { a = 2 + 3 } else { a = a + (b - 2) }"
+	s = " append (bd fdfdg)"
 	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
 	l.analyzeString(s) # timhle mu reknete, aby naparsoval string, ktery jste napsali
 	while (not l.isEOF()): # tohle slouzi k vypsani vsech tokenu
@@ -37,4 +37,4 @@ def testParser():
 
 
 
-testParser()
+testLexer()

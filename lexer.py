@@ -89,6 +89,9 @@ class Lexer:
 		self._keywords["return"] = Lexer.KW_RETURN
 		self._keywords["function"] = Lexer.KW_FUNCTION
 		self._keywords["print"] = Lexer.KW_PRINT
+		self._keywords["append"] = Lexer.KW_APPEND
+		self._keywords["insert"] = Lexer.KW_INSERT
+		self._keywords["pop"] = Lexer.KW_POP
 
 		self._keywords["and"] = Lexer.OP_AND
 		self._keywords["or"] = Lexer.OP_OR
