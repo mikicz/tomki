@@ -97,14 +97,7 @@ class Parser:
 
 		variableName = self.pop(Lexer.IDENT)[1]
 		self.pop(Lexer.OP_ASSIGN)
-		if (self.top()[0] == Lexer.KW_POP):
-			rhs = self.parsePop()
-		elif (self.top()[0] == Lexer.KW_LEN):
-			rhs = self.parseLen()
-		elif (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
-			rhs = self.parseFunctionCall()
-		else:
-			rhs = self.parseExpression()
+		rhs = self.parseExpression()
 		return VariableWrite(variableName, rhs)
 
 	def parseExpression(self):
@@ -183,6 +176,15 @@ class Parser:
 		elif (self.top()[0] == Lexer.STRING):
 			value = self.pop()[1]
 			return Literal(value)
+		
+		elif (self.top()[0] == Lexer.KW_POP): 
+			return self.parsePop()
+
+		elif (self.top()[0] == Lexer.KW_LEN): 
+			return self.parseLen()
+
+		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
+			return self.parseFunctionCall()
 
 		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] != Lexer.OP_BRACKETS_LEFT):
 			variableName = self.pop()[1]
@@ -195,14 +197,7 @@ class Parser:
 			self.pop(Lexer.OP_BRACKETS_RIGHT)
 			return VariableRead(variableName, indexValue)
 
-		elif (self.top()[0] == Lexer.KW_POP): 
-			return self.parsePop()
-
-		elif (self.top()[0] == Lexer.KW_LEN): 
-			return self.parseLen()
-
-		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
-			return self.parseFunctionCall()
+		
 
 		elif (self.top()[0] == Lexer.OP_BRACKETS_LEFT):
 			return self.parseArray()
