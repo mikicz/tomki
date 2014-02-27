@@ -17,6 +17,8 @@ class BinaryOperator:
 
 	def run(self, frame,ff):
 		l = self.left.run(frame,ff)
+		while(hasattr(l,"type")): #pojistka, když se nějak vrátí Literal nebo něco místo toho, co by mělo (int, str, list)
+			l = l.run(frame,ff)
 		r = self.right.run(frame,ff) 
 		le = Lexer() #abychom si mohli číst typy operátorů
 
