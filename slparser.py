@@ -79,6 +79,12 @@ class Parser:
 				return self.parseReturn()
 			else:
 				raise BaseException("Return může být pouze v bloku funkce")
+		elif (self.top()[0] == Lexer.KW_POP):
+			return self.parsePop()
+		elif (self.top()[0] == Lexer.KW_LEN):
+			return self.parseLen()
+		elif (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
+			return self.parseFunctionCall()
 		else:
 			return self.parseAssignment()
 
@@ -87,13 +93,7 @@ class Parser:
 	   
 		Ulozeni hodnoty do promenne vypada tak, ze na leve strane je identifikator promenne, hned za nim je operator prirazeni a za nim je vyraz, ktery vypocitava hodnotu, kterou do promenne chci ulozit. Tohle je zjednodusena verze prirazeni, viz komentare k hodine. 
 		"""
-		if (self.top()[0] == Lexer.KW_POP):
-			return self.parsePop()
-		elif (self.top()[0] == Lexer.KW_LEN):
-			return self.parseLen()
-		elif (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
-			return self.parseFunctionCall()
-
+		
 
 		variableName = self.pop(Lexer.IDENT)[1]
 		self.pop(Lexer.OP_ASSIGN)
