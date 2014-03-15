@@ -32,10 +32,12 @@ class Lexer:
 	KW_FUNCTION = "function"
 	KW_PRINT = "print"
 
+
 	KW_POP = "pop"
 	KW_APPEND = "append"
 	KW_INSERT = "insert"
 	KW_LEN = "len"
+	KW_JOIN = "join"
 
 	#operace
 	OP_ADD = "+" # operator scitani
@@ -94,6 +96,8 @@ class Lexer:
 		self._keywords["insert"] = Lexer.KW_INSERT
 		self._keywords["pop"] = Lexer.KW_POP
 		self._keywords["len"] = Lexer.KW_LEN
+		self._keywords["join"] = Lexer.KW_JOIN
+
 
 		self._keywords["and"] = Lexer.OP_AND
 		self._keywords["or"] = Lexer.OP_OR

@@ -46,22 +46,19 @@ class Parser:
 			self.pop()
 		return program
 
-	def parseStatement(self,thisisafunction=False):
+	def parseStatement(self):
 		""" STATEMENT ::= ( CONDITION | LOOP | E | FDEF ) ;
 
 		Statement je bud if, nebo zapis promenne. 
 		"""
 		if (self.top()[0] == Lexer.KW_IF): #podmínka
-			return self.parseIfStatement(thisisafunction=thisisafunction)
+			return self.parseIfStatement()
 		elif (self.top()[0] == Lexer.KW_WHILE): #while
-			return self.parseWhile(thisisafunction=thisisafunction)
+			return self.parseWhile()
 		elif (self.top()[0] == Lexer.KW_FOR): #for
-			return self.parseFor(thisisafunction=thisisafunction)
+			return self.parseFor()
 		elif (self.top()[0] == Lexer.KW_FUNCTION): #funkce
-			if thisisafunction == True:
-				raise BaseException("Nemuzes definovat funkci ve funkci")
-			else:
-				return self.parseFunction()
+			return self.parseFunction()
 
 		elif (self.top()[0] == Lexer.KW_APPEND): #append
 			return self.parseAppend()
@@ -70,15 +67,15 @@ class Parser:
 		elif (self.top()[0] == Lexer.KW_LEN): #insert
 			return self.parseLen()
 
+		elif (self.top()[0] == Lexer.KW_JOIN): #join
+			return self.parseJoin()
+
 		elif (self.top()[0] == Lexer.OP_BRACES_LEFT):
-			return self.parseBlock(thisisafunction=thisisafunction)
+			return self.parseBlock()
 		elif (self.top()[0] == Lexer.KW_PRINT):
 			return self.parsePrint()
 		elif (self.top()[0] == Lexer.KW_RETURN):
-			if (thisisafunction == True):
-				return self.parseReturn()
-			else:
-				raise BaseException("Return může být pouze v bloku funkce")
+			return self.parseReturn()
 		elif (self.top()[0] == Lexer.KW_POP):
 			return self.parsePop()
 		elif (self.top()[0] == Lexer.KW_LEN):
@@ -183,6 +180,9 @@ class Parser:
 		elif (self.top()[0] == Lexer.KW_LEN): 
 			return self.parseLen()
 
+		elif (self.top()[0] == Lexer.KW_JOIN):
+			return self.parseJoin()
+
 		elif (self.top()[0] == Lexer.IDENT) and (self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT):
 			return self.parseFunctionCall()
 
@@ -209,7 +209,7 @@ class Parser:
 			self.pop(Lexer.OP_PARENTHESES_RIGHT)
 			return result 
 
-	def parseIfStatement(self, thisisafunction=False):
+	def parseIfStatement(self):
 		""" 
 		CONDITION ::= KW_IF '(' E ')' BLOCK { KW_ELIF '(' E ')' BLOCK } [ KW_ELSE BLOCK ]
 	
@@ -219,7 +219,7 @@ class Parser:
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		condition = self.parseExpression()
 		self.pop(Lexer.OP_PARENTHESES_RIGHT)
-		trueCase = self.parseBlock(thisisafunction=thisisafunction)
+		trueCase = self.parseBlock()
 
 		elifs = []
 		while (self.top()[0] == Lexer.KW_ELIF):
@@ -227,19 +227,19 @@ class Parser:
 			self.pop(Lexer.OP_PARENTHESES_LEFT)
 			x = self.parseExpression() #podmínka 
 			self.pop(Lexer.OP_PARENTHESES_RIGHT)
-			y = self.parseBlock(thisisafunction=thisisafunction) #blok
+			y = self.parseBlock() #blok
 			elifs.append([x,y])
 
 		if (self.top()[0] == Lexer.KW_ELSE): # za elify muze byt ještě else
 			self.pop()
-			falseCase = self.parseBlock(thisisafunction=thisisafunction)
+			falseCase = self.parseBlock()
 		else: # to aby se nam chybeji vetev sprave zobrazila jako {}
 			falseCase = Block() 
 		
 		# cokoli ostatniho by bylo za ifem, neni soucasti ifu
 		return If(condition, trueCase,elifs, falseCase)
 
-	def parseWhile(self,thisisafunction=False):
+	def parseWhile(self):
 		"""
 		KW_WHILE '(' E ')' BLOCK
 		"""
@@ -248,11 +248,11 @@ class Parser:
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		condition = self.parseExpression()
 		self.pop(Lexer.OP_PARENTHESES_RIGHT)
-		block = self.parseBlock(thisisafunction=thisisafunction)
+		block = self.parseBlock()
 
 		return While(condition, block)
 
-	def parseFor(self,thisisafunction=False):
+	def parseFor(self):
 		"""
 		KW_FOR ident KW_IN ( ident | FCALL | FIELD) BLOCK
 		"""
@@ -266,10 +266,10 @@ class Parser:
 			array = VariableRead(self.pop(Lexer.IDENT)[1])
 		elif ( self.top()[0] == Lexer.OP_BRACKETS_LEFT ):
 			array = self.parseArray()
-		block = self.parseBlock(thisisafunction=thisisafunction)
+		block = self.parseBlock()
 		return For(var,array,block)
 
-	def parseBlock(self, thisisafunction=False):
+	def parseBlock(self):
 		""" BLOCK ::= op_braceopen { STATEMENT } op_braceclose
 
 		Blok je podobny programu, proste nekolik prikazu za sebou. 
@@ -277,7 +277,7 @@ class Parser:
 		self.pop(Lexer.OP_BRACES_LEFT)
 		result = Block()
 		while (self.top()[0] != Lexer.OP_BRACES_RIGHT):
-			result.add(self.parseStatement(thisisafunction=thisisafunction))
+			result.add(self.parseStatement())
 			if self.top()[0] == Lexer.OP_SEMICOLON:
 				self.pop(Lexer.OP_SEMICOLON)
 		self.pop(Lexer.OP_BRACES_RIGHT)
@@ -307,7 +307,7 @@ class Parser:
 				self.pop(Lexer.OP_COMMA)
 
 		self.pop(Lexer.OP_PARENTHESES_RIGHT)
-		block = self.parseBlock(thisisafunction=True)
+		block = self.parseBlock()
 		return FunctionWrite(functionName, arrgs, block)
 
 	def parseArray(self):
@@ -374,4 +374,14 @@ class Parser:
 		self.pop(Lexer.KW_RETURN)
 		return Return(self.parseExpression())
 
+	def parseJoin(self):
+		self.pop(Lexer.KW_JOIN)
+		self.pop(Lexer.OP_PARENTHESES_LEFT)
+		arrayofarrays = []
+		while self.top()[0] != Lexer.OP_PARENTHESES_RIGHT:
+			arrayofarrays.append(self.parseExpression())
+			if self.top()[0] == Lexer.OP_COMMA:
+				self.pop(Lexer.OP_COMMA)
+		self.pop(Lexer.OP_PARENTHESES_RIGHT)
+		return Join(arrayofarrays)
 

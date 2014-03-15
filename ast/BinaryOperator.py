@@ -95,9 +95,9 @@ class BinaryOperator:
 				else:
 					return Literal(float(l) + float(r) )
 			elif (isinstance(l, list) and isinstance(r, list)):
-				return l+r
+				return Literal( l+r )
 			else:
-				return str(l) + str(r)
+				return Literal( str(l) + str(r) )
 
 		elif self.operator == le.OP_SUBSTRACT:
 			if ( self.isfloat(l) and self.isfloat(r) ): #jsou to čísla, vezme to i float

@@ -26,6 +26,5 @@ class For:
 		for prvek in array:
 			novyframe=Frame(frame)
 			localblock = copy (self.block) #aby to neodkazovalo na stejný blok
-			localblock.add_zacatek(Print(VariableRead(variableName)))
 			localblock.add_zacatek(VariableWrite(variableName,prvek))
 			localblock.run(novyframe,ff)

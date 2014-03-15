@@ -19,12 +19,11 @@ def testParser():
 	s = """
 		function quicksort(seznam)
 			{
-				print "jsem ve funkci";
+				print "funguju";
 				x = len(seznam);
-				print x;
+				print "funguju 2";
 				if (x == 1)
 					{
-						print "this fucking thing";
 						return seznam;
 					}
 				else
@@ -45,25 +44,28 @@ def testParser():
 							};
 						vystup1 = quicksort(mali);
 						vystup2 = quicksort(velci);
-						vystup = vystup1+[pivot]+vystup2;
+						vystup = join (vystup1, pivot, vystup2);
 						return vystup;
 					};
-				
-
-
-
 			};
-		print "vytvarim a";
-		a = [758,796,7];
-		print "mam a, spoustim quicksort";
+		a = [7,758,6];
 		b = quicksort(a);
-		for i in b
+		print len(b);
+		for x in b
 			{
-				c = i + " "
-				print c;
+				print x;
 			};
+		
 			"""
-	#s = """ a = 5; b = a + 3;"""
+	s = """
+		function rekurze(bla) 
+			{
+				print bla;
+				x = bla + 1;
+				rekurze(x);
+			}; 
+		rekurze(0); """
+	#s = """ function neco (bla) { return 3+5; };  print neco(1);"""
 	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
 	l.analyzeString(s) # timhle mu reknete, aby naparsoval string, ktery jste napsali
 
@@ -75,7 +77,7 @@ def testParser():
 	print(ast) # zobrazim ten strom
 	ast.run(frame,ffy)
 	print frame.locals
-	print ffy.functions
+	#print ffy.functions
 
 
 

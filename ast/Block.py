@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from ReturnThingy import ReturnThingy
+
 class Block:
 	""" Blok prikazu. 
 
@@ -25,7 +27,4 @@ class Block:
 
 	def run(self, frame,ff):
 		for prikaz in self.code:
-			if (prikaz.type!="Return"):
 				prikaz.run(frame,ff)
-			else:
-				return prikaz.run(frame,ff)	

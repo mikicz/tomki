@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from ReturnThingy import ReturnThingy
+from Literal import Literal
 class Return:
 	def __init__(self,what):
 		self.what = what
@@ -8,4 +10,4 @@ class Return:
 		return "return  %s " % (self.what)
 
 	def run(self, frame,ff):
-		return self.what.run(frame,ff)
+		raise ReturnThingy(Literal(self.what.run(frame,ff)))

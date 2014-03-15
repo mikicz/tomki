@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from Frame import Frame
 from VariableWrite import VariableWrite
+from ReturnThingy import ReturnThingy
 
 class FunctionCall:
 	def __init__(self, name, arrgs):
@@ -31,5 +32,8 @@ class FunctionCall:
 			block.add_zacatek(VariableWrite(i.run(frame,ff),self.arrgs[x]))
 			#novyframe.set(i.__str__(),Literal(self.arrgs[x].run(frame,ff)))
 			x+=1
-		return block.run(novyframe,ff)
-		print novyframe.locals
+		try:
+			block.run(novyframe,ff)
+		except ReturnThingy, e:
+			return e.run(frame,ff)
+		#print novyframe.locals
