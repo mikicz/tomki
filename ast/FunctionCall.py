@@ -13,27 +13,27 @@ class FunctionCall:
 		if (self.arrgs == []):
 			return " %s ()" % (self.name,)
 		else:
-			a = "%s ("  % (self.name,)
-			x=1
+			a = "%s ("  % (self.name)
+			x = 1
 			for y in self.arrgs:
-				if x == 1:
+				if (x == 1):
 					a += y.__str__()
 				else:
 					a += ", "+ y.__str__()
-				x+=1
+				x += 1
 			a += ") "
 			return a
 
 	def run (self, frame, ff):
 		(arrrgumenty, block) = ff.get(self.name.run(frame, ff))
-		novyframe=Frame(frame)
-		x=0
+		novyframe = Frame(frame)
+		x = 0
 		for i in arrrgumenty:
-			block.add_zacatek(VariableWrite(i.run(frame,ff),self.arrgs[x]))
+			block.add_zacatek(VariableWrite(i.run(frame, ff), self.arrgs[x]))
 			#novyframe.set(i.__str__(),Literal(self.arrgs[x].run(frame,ff)))
-			x+=1
+			x += 1
 		try:
-			block.run(novyframe,ff)
+			block.run(novyframe, ff)
 		except ReturnThingy, e:
-			return e.run(frame,ff)
+			return e.run(frame, ff)
 		#print novyframe.locals

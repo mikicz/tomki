@@ -60,8 +60,12 @@ def testParser():
 	s = """
 		function rekurze(bla) 
 			{
+				if(bla==10){
+					return bla;
+				};
 				print bla;
 				x = bla + 1;
+				print x;
 				rekurze(x);
 			}; 
 		rekurze(0); """
