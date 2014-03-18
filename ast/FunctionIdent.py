@@ -7,5 +7,5 @@ class FunctionIdent:
 	def __str__(self):
 		return self.name
 
-	def run(self, frame,ff):
+	def run(self, frame, functionFrame):
 		return self.name

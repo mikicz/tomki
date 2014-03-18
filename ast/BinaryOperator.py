@@ -15,11 +15,11 @@ class BinaryOperator:
 	def __str__(self):
 		return "( %s %s %s )" % (self.left, self.operator, self.right)
 
-	def run(self, frame,ff):
-		l = self.left.run(frame,ff)
+	def run(self, frame, functionFrame):
+		l = self.left.run(frame, functionFrame)
 		while(hasattr(l,"type")): #pojistka, když se nějak vrátí Literal nebo něco místo toho, co by mělo (int, str, list)
-			l = l.run(frame,ff)
-		r = self.right.run(frame,ff) 
+			l = l.run(frame, functionFrame)
+		r = self.right.run(frame, functionFrame) 
 		le = Lexer() #abychom si mohli číst typy operátorů
 
 		if self.operator == le.OP_OR:

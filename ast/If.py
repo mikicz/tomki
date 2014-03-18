@@ -22,14 +22,14 @@ class If:
 			a+= "else %s " % (self.falseCase)
 		return a
 
-	def run(self, frame,ff):
+	def run(self, frame, functionFrame):
 		self.istrue = 0
-		if self.condition.run(frame,ff).run(frame,ff) == True: #condition.run vrací Literal True nbo False
+		if self.condition.run(frame, functionFrame).run(frame, functionFrame) == True: #condition.run vrací Literal True nbo False
 			self.istrue = 1
-			self.trueCase.run(frame,ff)
+			self.trueCase.run(frame, functionFrame)
 		for i in self.elifs:
-			if i[0].run(frame,ff).frame(frame,None) == True:
+			if i[0].run(frame, functionFrame).frame(frame,None) == True:
 				self.istrue = 1
-				i[1].run(frame,ff)
+				i[1].run(frame, functionFrame)
 		if self.istrue==0:
-			self.falseCase.run(frame,ff)
+			self.falseCase.run(frame, functionFrame)

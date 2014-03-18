@@ -9,7 +9,7 @@ class Append:
 	def __str__(self):
 		return "append (%s, %s)" % (self.ident, self.value)
 
-	def run(self, frame, ff):
-		self.array = frame.get(self.ident).run(frame,ff)
+	def run(self, frame, functionFrame):
+		self.array = frame.get(self.ident).run(frame, functionFrame)
 		self.array.append(self.value)
-		return frame.set(self.ident,Literal(self.array), ff)
+		return frame.set(self.ident,Literal(self.array), functionFrame)

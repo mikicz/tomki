@@ -6,7 +6,7 @@ from ReturnThingy import ReturnThingy
 class FunctionCall:
 	def __init__(self, name, arrgs):
 		self.name = name
-		self.arrgs = arrgs
+		self.arrgs = arrgs	# arrgs je seznam hodnot argumentů
 		self.type = "FunctionCall"
 
 	def __str__(self):
@@ -24,16 +24,13 @@ class FunctionCall:
 			a += ") "
 			return a
 
-	def run (self, frame, ff):
-		(arrrgumenty, block) = ff.get(self.name.run(frame, ff))
+	def run (self, frame, functionFrame):
+		(arrrgumenty, block) = functionFrame.get(self.name.run(frame, functionFrame))
 		novyframe = Frame(frame)
-		x = 0
-		for i in arrrgumenty:
-			block.add_zacatek(VariableWrite(i.run(frame, ff), self.arrgs[x]))
-			#novyframe.set(i.__str__(),Literal(self.arrgs[x].run(frame,ff)))
-			x += 1
+		for i in range(0, len(arrrgumenty)):
+			novyframe.set(arrrgumenty[i].name, self.arrgs[i], functionFrame)
 		try:
-			block.run(novyframe, ff)
+			block.run(novyframe, functionFrame)
 		except ReturnThingy, e:
-			return e.run(frame, ff)
+			return e.run(frame, functionFrame)
 		#print novyframe.locals

@@ -19,12 +19,12 @@ class For:
 	def __str__(self):
 		return "for (%s) in %s %s" % (self.variable, self.array, self.block)
 
-	def run(self, frame, ff):
-		variableName = self.variable.run(frame,ff)
-		array = self.array.run(frame,ff)
+	def run(self, frame, functionFrame):
+		variableName = self.variable.run(frame, functionFrame)
+		array = self.array.run(frame, functionFrame)
 
 		for prvek in array:
 			novyframe=Frame(frame)
 			localblock = copy (self.block) #aby to neodkazovalo na stejný blok
 			localblock.add_zacatek(VariableWrite(variableName,prvek))
-			localblock.run(novyframe,ff)
+			localblock.run(novyframe, functionFrame)

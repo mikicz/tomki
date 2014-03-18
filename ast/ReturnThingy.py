@@ -7,5 +7,5 @@ class ReturnThingy:
 	def __str__(self):
 		return self.value.__str__()
 
-	def run(self, frame, ff):
-		return self.value.run(frame,ff)
+	def run(self, frame, functionFrame):
+		return self.value.run(frame, functionFrame)

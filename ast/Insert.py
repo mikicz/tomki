@@ -10,7 +10,7 @@ class Insert:
 	def __str__(self):
 		return "insert (%s, %s, %s)" % (self.ident, self.value, self.index)
 
-	def run(self, frame, ff):
-		self.array = frame.get(self.ident).run(frame,ff)
-		self.array.insert(self.index.run(frame, ff), self.value)
-		return frame.set(self.ident,Literal(self.array), ff)
+	def run(self, frame, functionFrame):
+		self.array = frame.get(self.ident).run(frame, functionFrame)
+		self.array.insert(self.index.run(frame, functionFrame), self.value)
+		return frame.set(self.ident,Literal(self.array), functionFrame)

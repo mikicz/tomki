@@ -15,10 +15,10 @@ class Join:
 		ret += " )"
 		return ret
 
-	def run(self, frame, ff):
+	def run(self, frame, functionFrame):
 		x = []
 		for i in self.array:
-			y = i.run(frame,ff)
+			y = i.run(frame, functionFrame)
 			if (isinstance(y,list)):
 				x += y
 			else:

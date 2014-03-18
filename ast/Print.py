@@ -7,5 +7,5 @@ class Print:
 	def __str__(self):
 		return "print ( %s )" % (self.what)
 
-	def run(self, frame,ff):
-		print self.what.run(frame,ff)
+	def run(self, frame, functionFrame):
+		print self.what.run(frame, functionFrame)

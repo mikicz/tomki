@@ -13,22 +13,22 @@ class Literal:
 		except:
 			return str(self.value)
 
-	def run(self, frame,ff, index=None):
+	def run(self, frame, functionFrame, index=None):
 		#print self.value
 		try:
 			if self.value.type == "Literal":
-				self.value = self.value.run(frame,ff)
+				self.value = self.value.run(frame, functionFrame)
 		except:
 			pass
 
 		if index!=None:
-			return self.value[index.run(frame, ff)].run(frame,ff)
+			return self.value[index.run(frame, functionFrame)].run(frame, functionFrame)
 		else:
 			if (isinstance(self.value, list)):
 				blah = []
 				for i in self.value:
 					try:
-						blah.append(i.run(frame,ff))
+						blah.append(i.run(frame, functionFrame))
 					except:
 						blah.append(i)
 				return blah

@@ -25,6 +25,6 @@ class Block:
 		self.result = self.result + "\n}\n"
 		return self.result
 
-	def run(self, frame,ff):
+	def run(self, frame, functionFrame):
 		for prikaz in self.code:
-				prikaz.run(frame,ff)
+				prikaz.run(frame, functionFrame)

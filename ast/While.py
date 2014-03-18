@@ -12,6 +12,6 @@ class While:
 	def __str__(self):
 		return "while (%s) %s" % (self.condition, self.block)
 
-	def run(self, frame,ff):
-		while self.condition.run(frame,ff) == True:
-			self.block.run(frame,ff)
+	def run(self, frame, functionFrame):
+		while self.condition.run(frame, functionFrame) == True:
+			self.block.run(frame, functionFrame)

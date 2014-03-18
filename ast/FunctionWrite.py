@@ -25,5 +25,5 @@ class FunctionWrite:
 			a += ") " + self.block.__str__()
 			return a
 
-	def run(self, frame, ff):
-		ff.add(self.name.run(frame, ff), self.arrgs, self.block)
+	def run(self, frame, functionFrame):
+		functionFrame.add(self.name.run(frame, functionFrame), self.arrgs, self.block)

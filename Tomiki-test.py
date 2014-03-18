@@ -65,7 +65,6 @@ def testParser():
 				};
 				print bla;
 				bla = bla - 1;
-				print bla;
 				return( rekurze(bla) );
 			}; 
 		rekurze(10); """

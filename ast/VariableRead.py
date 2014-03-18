@@ -9,5 +9,5 @@ class VariableRead:
 	def __str__(self):
 		return self.variableName
 
-	def run(self,frame,ff):
-		return frame.get(self.variableName).run(frame,ff, self.index)
+	def run(self,frame, functionFrame):
+		return frame.get(self.variableName).run(frame, functionFrame, self.index)
