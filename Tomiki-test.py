@@ -60,12 +60,16 @@ def testParser():
 	s = """
 		function rekurze(bla) 
 			{
+				if(bla<=0){
+					return(bla);
+				};
 				print bla;
-				x = bla + 1;
-				rekurze(x);
+				bla = bla - 1;
+				print bla;
+				return( rekurze(bla) );
 			}; 
-		rekurze(0); """
-	#s = """ function neco (bla) { return 3+5; };  print neco(1);"""
+		rekurze(10); """
+#	s = """ 		bla = 5;		function nekdo(){			print("test");		};		nekdo();		print bla;"""
 	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
 	l.analyzeString(s) # timhle mu reknete, aby naparsoval string, ktery jste napsali
 
