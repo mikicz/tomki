@@ -6,11 +6,16 @@ class Literal:
 		self.type = "Literal"
 
 	def __str__(self):
-		try:
-			a = self.value[0]
-			return "Je tady pole a nefunguje mi kurva debilni __str__"
-
-		except:
+		if isinstance(self.value, list):
+			x = "["
+			for i in self.value:
+				if (x == "["):
+					x += i.__str__()
+				else:
+					x += ", " + i.__str__()
+			x += "]"
+			return x
+		else:
 			return str(self.value)
 
 	def run(self, frame, functionFrame, index=None):
