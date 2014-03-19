@@ -24,7 +24,5 @@ class For:
 		array = self.array.run(frame, functionFrame)
 
 		for prvek in array:
-			novyframe=Frame(frame)
-			localblock = copy (self.block) #aby to neodkazovalo na stejný blok
-			localblock.add_zacatek(VariableWrite(variableName,prvek))
-			localblock.run(novyframe, functionFrame)
+			frame.set(variableName, prvek, functionFrame)
+			self.block.run (frame, functionFrame)

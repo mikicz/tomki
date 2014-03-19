@@ -41,7 +41,7 @@ class BinaryOperator:
 				else:
 					return Literal(float(l) == float(r) )
 			else:
-				return Literal(False)
+				return Literal(l == r)
 
 		elif self.operator == le.OP_NOTEQUAL:
 			if ( self.isfloat(l) and self.isfloat(r) ):
