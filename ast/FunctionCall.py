@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from Frame import Frame
 from VariableWrite import VariableWrite
-from ReturnThingy import ReturnThingy
+from Literal import Literal
 
 class FunctionCall:
 	def __init__(self, name, arrgs):
