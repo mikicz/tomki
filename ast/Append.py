@@ -10,6 +10,6 @@ class Append:
 		return "append (%s, %s)" % (self.ident, self.value)
 
 	def run(self, frame, functionFrame):
-		self.array = frame.get(self.ident).run(frame, functionFrame)
-		self.array.append(self.value)
-		return frame.set(self.ident,Literal(self.array), functionFrame)
+		array = frame.get(self.ident).run(frame, functionFrame)
+		array.append(self.value.run(frame, functionFrame))
+		return frame.set(self.ident,Literal(array), functionFrame)
