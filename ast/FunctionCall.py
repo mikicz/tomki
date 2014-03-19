@@ -17,9 +17,9 @@ class FunctionCall:
 			x = 1
 			for y in self.arrgs:
 				if (x == 1):
-					a += y.__str__()
+					a += str(y.__str__())
 				else:
-					a += ", "+ y.__str__()
+					a += ", "+ str(y.__str__())
 				x += 1
 			a += ") "
 			return a
@@ -31,6 +31,6 @@ class FunctionCall:
 			novyframe.set(arrrgumenty[i].name, self.arrgs[i], functionFrame)
 		try:
 			block.run(novyframe, functionFrame)
-		except ReturnThingy, e:
-			return e.run(frame, functionFrame)
+		except Literal, e:
+			return e
 		#print novyframe.locals

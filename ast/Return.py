@@ -10,4 +10,4 @@ class Return:
 		return "return  %s " % (self.what)
 
 	def run(self, frame, functionFrame):
-		raise ReturnThingy(Literal(self.what.run(frame, functionFrame)))
+		raise Literal(self.what.run(frame, functionFrame))
