@@ -258,7 +258,7 @@ class Parser:
 		"""
 
 		self.pop(Lexer.KW_FOR)
-		var = ForIdent(self.pop(Lexer.IDENT)[1])
+		var = self.pop(Lexer.IDENT)[1]
 		self.pop(Lexer.KW_IN)
 		if ( self.top()[0] == Lexer.IDENT and self.top(1)[0] == Lexer.OP_PARENTHESES_LEFT ):
 			array = self.parseFunctionCall() #function call
@@ -302,7 +302,7 @@ class Parser:
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		arrgs=[]
 		while(self.top()[0] == Lexer.IDENT): 
-			arrgs.append(ArrgIdent(self.pop(Lexer.IDENT)[1]))
+			arrgs.append(self.pop(Lexer.IDENT)[1])
 			if self.top()[0] == Lexer.OP_COMMA:
 				self.pop(Lexer.OP_COMMA)
 

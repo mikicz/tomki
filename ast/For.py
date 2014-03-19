@@ -20,7 +20,7 @@ class For:
 		return "for (%s) in %s %s" % (self.variable, self.array, self.block)
 
 	def run(self, frame, functionFrame):
-		variableName = self.variable.run(frame, functionFrame)
+		variableName = self.variable
 		array = self.array.run(frame, functionFrame)
 
 		for prvek in array:

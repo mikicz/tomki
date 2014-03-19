@@ -25,10 +25,11 @@ class FunctionCall:
 			return a
 
 	def run (self, frame, functionFrame):
-		(arrrgumenty, block) = functionFrame.get(self.name.run(frame, functionFrame))
+		(jmenaargumentu, block) = functionFrame.get(self.name.run(frame, functionFrame))
 		novyframe = Frame(frame)
-		for i in range(0, len(arrrgumenty)):
-			novyframe.set(arrrgumenty[i].name, self.arrgs[i], functionFrame)
+		for i in range(0, len(jmenaargumentu)):
+			novyframe.set(jmenaargumentu[i], self.arrgs[i], functionFrame)
+
 		try:
 			block.run(novyframe, functionFrame)
 		except Literal, e:
