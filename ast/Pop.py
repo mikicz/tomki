@@ -13,4 +13,4 @@ class Pop:
 		array = frame.get(self.ident).run(frame, functionFrame)
 		value = array.pop(self.index.run(frame,  functionFrame))
 		frame.set(self.ident, Literal(array), functionFrame)
-		return Literal(value.run(frame, functionFrame))
+		return Literal(value)
