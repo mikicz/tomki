@@ -26,4 +26,4 @@ class FunctionWrite:
 			return a
 
 	def run(self, frame, functionFrame):
-		functionFrame.add(self.name.run(frame, functionFrame), self.arrgs, self.block)
+		functionFrame.add(self.name, self.arrgs, self.block)

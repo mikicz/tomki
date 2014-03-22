@@ -298,7 +298,7 @@ class Parser:
 	def parseFunction(self):
 		""" FDEF :== KW_FUNCTION ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT BLOCK """
 		self.pop(Lexer.KW_FUNCTION)
-		functionName=FunctionIdent(self.pop(Lexer.IDENT)[1])
+		functionName=self.pop(Lexer.IDENT)[1]
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		arrgs=[]
 		while(self.top()[0] == Lexer.IDENT): 
