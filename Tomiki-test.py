@@ -19,9 +19,7 @@ def testParser():
 	s = """
 		function quicksort(seznam)
 			{
-				print "funguju";
 				x = len(seznam);
-				print "funguju 2";
 				if (x == 1)
 					{
 						return seznam;
@@ -50,14 +48,10 @@ def testParser():
 			};
 		a = [7,758,6];
 		b = quicksort(a);
-		print len(b);
-		for x in b
-			{
-				print x;
-			};
+		print b;
 		
 			"""
-	s = """
+	"""s = 
 		function rekurze(bla) 
 			{
 				if(bla<=0){
