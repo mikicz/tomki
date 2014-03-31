@@ -11,3 +11,7 @@ class VariableWrite:
 
 	def run(self, frame, functionFrame):
 		return frame.set(self.variableName, self.value, functionFrame)
+
+	def compile(self,block):
+		x = self.value.compile(block)
+		block.addinstruction("copy",self.variableName,x)

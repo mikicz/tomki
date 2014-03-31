@@ -13,3 +13,6 @@ class Append:
 		array = frame.get(self.ident).run(frame, functionFrame)
 		array.append(self.value.run(frame, functionFrame))
 		return frame.set(self.ident,Literal(array), functionFrame)
+
+	def compile(self,interpret):
+		pass

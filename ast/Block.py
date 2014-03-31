@@ -27,4 +27,8 @@ class Block:
 
 	def run(self, frame, functionFrame):
 		for prikaz in self.code:
-				prikaz.run(frame, functionFrame)
+			prikaz.run(frame, functionFrame)
+
+	def compile(self,block):
+		for prikaz in self.code:
+			prikaz.compile(block)

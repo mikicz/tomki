@@ -6,6 +6,7 @@ from lexer import Lexer
 # jmenuje se slparser (Simple Language Parser), aby se netriskal s pythonim modulem parser
 from slparser import Parser
 from ast import *
+from bytecodeinterpret import BytecodeInterpret
 
 def testLexer():
 	""" Ukazka pouziti lexeru. """
@@ -49,9 +50,9 @@ def testParser():
 		a = [7,758,6];
 		b = quicksort(a);
 		print b;
-		
+		print a;
 			"""
-	"""s = 
+	""" s = 
 		function rekurze(bla) 
 			{
 				if(bla<=0){
@@ -62,6 +63,7 @@ def testParser():
 				return( rekurze(bla) );
 			}; 
 		rekurze(10); """
+	#s = "a = 5; b = [a]; a = 6; print b; "
 #	s = """ 		bla = 5;		function nekdo(){			print("test");		};		nekdo();		print bla;"""
 	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
 	l.analyzeString(s) # timhle mu reknete, aby naparsoval string, ktery jste napsali
@@ -76,8 +78,44 @@ def testParser():
 	print frame.locals
 	#print ffy.functions
 
+def testInterpret():
+	s = """
+	a = 5;
+	b = 6;
+	if ( a == b )
+		{
+			c = 7;
+		}
+	elif ( a > b )
+		{
+			c = 8;
+		}
+	elif ( a < b )
+		{
+			c = 9;
+		}
+	else
+		{
+			c = 10;
+		};
+	"""
+
+	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
+	l.analyzeString(s) # timhle mu reknete, aby naparsoval string, ktery jste napsali
+
+	p = Parser(l) # zalozim si parser a dam mu lexer ze ktereho bude cist tokeny
+	ast = p.parse() # naparsuju co mam v lexeru a vratim AST 
+
+	frame = Frame(None)
+	ffy=FunctionFrame()
+	print(ast) # zobrazim ten strom
+	
+	block = BytecodeInterpret()
+
+	ast.compile(block)
+
+	print block
 
 
 
-
-testParser()
+testInterpret()

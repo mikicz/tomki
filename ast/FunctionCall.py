@@ -28,7 +28,8 @@ class FunctionCall:
 		(jmenaargumentu, block) = functionFrame.get(self.name.run(frame, functionFrame))
 		novyframe = Frame(frame)
 		for i in range(0, len(jmenaargumentu)):
-			novyframe.set(jmenaargumentu[i], self.arrgs[i], functionFrame)
+			
+			novyframe.set(jmenaargumentu[i], self.arrgs[i].execute(frame), functionFrame)
 
 		try:
 			block.run(novyframe, functionFrame)

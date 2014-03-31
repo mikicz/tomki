@@ -11,3 +11,8 @@ class VariableRead:
 
 	def run(self,frame, functionFrame):
 		return frame.get(self.variableName).run(frame, functionFrame, self.index)
+
+	def compile(self,block):
+		res = block.tempvariable()
+		block.addinstruction("copy",res,self.variableName)
+		return res
