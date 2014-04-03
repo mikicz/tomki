@@ -285,7 +285,7 @@ class Parser:
 
 	def parseFunctionCall(self):
 		""" FCALL ::= ident OP_PARENTHESES_LEFT ARGS OP_PARENTHESES_RIGHT """
-		functionName=FunctionIdent(self.pop(Lexer.IDENT)[1])
+		functionName=self.pop(Lexer.IDENT)[1]
 		self.pop(Lexer.OP_PARENTHESES_LEFT)
 		arrgs=[]
 		while(self.top()[0] != Lexer.OP_PARENTHESES_RIGHT): 
