@@ -15,7 +15,7 @@ class FunctionWrite:
 			return "function %s () %s" % (self.name, self.block)
 		else:
 			a = "function %s (" % (self.name,)
-			x=1
+			x = 1
 			for y in self.arrgs:
 				if x == 1:
 					a += y.__str__()

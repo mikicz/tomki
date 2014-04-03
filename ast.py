@@ -16,15 +16,12 @@ from While import While
 from For import For
 from FunctionWrite import FunctionWrite
 from FunctionCall import FunctionCall
-from ArrgIdent import ArrgIdent
 from Print import Print 
 from Return import Return
-from FunctionIdent import FunctionIdent
 from Append import Append
 from Insert import Insert
 from Pop import Pop
 from Len import Len
-from ForIdent import ForIdent 
 from Join import Join
 
 
