@@ -91,11 +91,20 @@ class Parser:
 		Ulozeni hodnoty do promenne vypada tak, ze na leve strane je identifikator promenne, hned za nim je operator prirazeni a za nim je vyraz, ktery vypocitava hodnotu, kterou do promenne chci ulozit. Tohle je zjednodusena verze prirazeni, viz komentare k hodine. 
 		"""
 		
+		if (self.top(1)[0] == Lexer.OP_BRACKETS_LEFT):
+			variableName = self.pop(Lexer.IDENT)[1]
+			self.pop(Lexer.OP_BRACKETS_LEFT)
+			index = self.parseExpression()
+			self.pop(Lexer.OP_BRACKETS_RIGHT)
+			self.pop(Lexer.OP_ASSIGN)
+			rhs = self.parseExpression()
+			return VariableWrite(variableName, rhs, index=index)
 
-		variableName = self.pop(Lexer.IDENT)[1]
-		self.pop(Lexer.OP_ASSIGN)
-		rhs = self.parseExpression()
-		return VariableWrite(variableName, rhs)
+		else:
+			variableName = self.pop(Lexer.IDENT)[1]
+			self.pop(Lexer.OP_ASSIGN)
+			rhs = self.parseExpression()
+			return VariableWrite(variableName, rhs)
 
 	def parseExpression(self):
 		""" E0 ::= E1 { OP_OR E1 } """
