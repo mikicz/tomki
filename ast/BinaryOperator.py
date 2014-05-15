@@ -177,48 +177,48 @@ class BinaryOperator:
 		le = Lexer() #abychom si mohli číst typy operátorů
 
 		if self.operator == le.OP_OR:
-			block.addinstruction("or",res,l,r)
+			block.addinstruction("or", res, l, r)
 
 		elif self.operator == le.OP_AND:
-			block.addinstruction("and",res,l,r)
+			block.addinstruction("and", res, l, r)
 
 		elif self.operator == le.OP_EQUAL:
-			block.addinstruction("eq",res,l,r)
+			block.addinstruction("eq", res, l, r)
 
 		elif self.operator == le.OP_NOTEQUAL:
-			block.addinstruction("neq",res,l,r)
+			block.addinstruction("neq", res, l, r)
 
 		elif self.operator == le.OP_BIGGER:
-			block.addinstruction("big",res,l,r)
+			block.addinstruction("big", res, l, r)
 
 		elif self.operator == le.OP_BIGGEROREQUAL:
-			block.addinstruction("bigoreq",res,l,r)
+			block.addinstruction("bigoreq", res, l, r)
 
 		elif self.operator == le.OP_SMALLER:
-			block.addinstruction("sma",res,l,r)
+			block.addinstruction("sma", res, l, r)
 
 		elif self.operator == le.OP_SMALLEROREQUAL:
-			block.addinstruction("smaoreq",res,l,r)
+			block.addinstruction("smaoreq", res, l, r)
 
 		elif self.operator == le.OP_ADD:
-			block.addinstruction("add",res,l,r)
+			block.addinstruction("add", res, l, r)
 
 		elif self.operator == le.OP_SUBSTRACT:
-			block.addinstruction("sub",res,l,r)
+			block.addinstruction("sub", res, l, r)
 
 		elif self.operator == le.OP_MULTIPLY:
-			block.addinstruction("mul",res,l,r)
+			block.addinstruction("mul", res, l, r)
 
 		elif self.operator == le.OP_MOCNIT:
-			block.addinstruction("exp",res,l,r)
+			block.addinstruction("exp", res, l, r)
 
 		elif self.operator == le.OP_DIVIDE:
-			block.addinstruction("div",res,l,r)
+			block.addinstruction("div", res, l, r)
 
 		elif self.operator == le.OP_FLOORDIVISION:
-			block.addinstruction("floordiv",res,l,r)
+			block.addinstruction("floordiv", res, l, r)
 
 		elif self.operator == le.OP_REMAINDER:
-			block.addinstruction("rem",res,l,r)
+			block.addinstruction("rem", res, l, r)
 
 		return res
