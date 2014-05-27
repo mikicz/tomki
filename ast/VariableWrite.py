@@ -11,7 +11,6 @@ class VariableWrite:
 		if (self.index == None):
 			return "%s = %s" % (self.variableName, self.value)
 		else:
-			
 			return "%s[%s] = %s" % (self.variableName, self.index, self.value)
 
 	def run(self, frame, functionFrame):
@@ -25,7 +24,3 @@ class VariableWrite:
 				self.index = self.index.run(frame,functionFrame)
 			array[self.index.run(frame,functionFrame)] = self.value.run(frame,functionFrame)
 			return frame.set(self.variableName,array,functionFrame)
-
-	def compile(self,block):
-		x = self.value.compile(block)
-		block.addinstruction("copy",self.variableName,x)

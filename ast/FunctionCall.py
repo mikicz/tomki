@@ -1,46 +1,37 @@
 # -*- coding: utf-8 -*-
 from Frame import Frame
+from VariableWrite import VariableWrite
 from Literal import Literal
 
 class FunctionCall:
-    """
-    AST pro volání funkce, pamatuje si jméno funkce a argumenty, které poté dosadí do volání.
-    """
+	def __init__(self, name, arrgs):
+		self.name = name
+		self.arrgs = arrgs	# arrgs je seznam hodnot argumentů
+		self.type = "FunctionCall"
 
-    def __init__(self, name, arguments):
-        
-        self.name = name
-        self.arguments = arguments # pole argumentů
-        self.type = "FunctionCall"
+	def __str__(self):
+		if (self.arrgs == []):
+			return " %s ()" % (self.name,)
+		else:
+			a = "%s ("  % (self.name)
+			x = 1
+			for y in self.arrgs:
+				if (x == 1):
+					a += str(y.__str__())
+				else:
+					a += ", "+ str(y.__str__())
+				x += 1
+			a += ") "
+			return a
 
-    def __str__(self): # pro jednoduché printování
-        
-        if (self.arguments == []): # pokud je volání bez argumentů
-            return " %s ()" % (self.name,)
-        
-        else:
-            result = "%s ("  % (self.name,)
-            firstArgument = True
-            
-            for y in self.arguments:
-                if (firstArgument): # první argument před sebou nemá čárku
-                    result += y.__str__() # přidá se __str__ podřazeného AST
-                    firstArgument = False
-                else:
-                    result += ", "+ y.__str__()
-                
-            
-            result += ") "
-            return result
+	def run (self, frame, functionFrame):
+		(jmenaargumentu, block) = functionFrame.get(self.name)
+		novyframe = Frame(frame)
+		for i in range(0, len(jmenaargumentu)):
+			novyframe.set(jmenaargumentu[i], self.arrgs[i], functionFrame)
 
-    def run (self, frame, functionFrame): # samotné spuštění funkce 
-        (argumentNames, block) = functionFrame.get(self.name) # vytáhnu si z functionFrame jména argumentů a blok, který se má spouštět
-        newFrame = Frame(frame) # nový Frame, ve kterém se funkce spustí, s odkazem na mateřský frame pro globální proměné
-        for i in range(0, len(argumentNames)):
-            newFrame.set(argumentNames[i], self.arguments[i].run(frame,functionFrame), functionFrame) # přidám do newFrame všechny proměné se správnými jmény
-       
-        try:
-            block.run(newFrame, functionFrame) # pustí block příkazů přiřazený k funkci
-        except Literal, e: # Literal je používán k odchycení returnu
-            return e
-        
+		try:
+			block.run(novyframe, functionFrame)
+		except Literal, e:
+			return e
+		#print novyframe.locals

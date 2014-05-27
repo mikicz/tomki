@@ -32,48 +32,4 @@ class If:
 				self.istrue = 1
 				i[1].run(frame, functionFrame)
 		if self.istrue==0:
-			for i in self.elifs:
-				if (self.istrue == 0):
-					if i[0].run(frame, functionFrame).frame(frame,None) == True:
-						self.istrue = 1
-						i[1].run(frame, functionFrame)
-			if (self.istrue == 0):
-				self.falseCase.run(frame, functionFrame)
-
-	def compile(self,block):
-		if (len(self.elifs)==0):
-			res = self.condition.compile(block)
-			block.addinstruction("ifelse",res,"falseCase")
-			self.trueCase.compile(block)
-			block.addinstruction("jump", "end")
-			block.addinstruction("addr","falseCase")
-			self.falseCase.compile(block)
-			block.addinstruction("addr", "end")
-		else:
-			res = self.condition.compile(block)
-			block.addinstruction("ifelif",res)
-			self.trueCase.compile(block)
-			block.addinstruction("jump", "end")
-			x = 1
-			l = len(self.elifs)
-			for i in self.elifs:
-				if (x != l):
-					block.addinstruction("addr","elif")
-					res = i[0].compile(block)
-					block.addinstruction("ifelif",res)
-					i[1].compile(block)
-					block.addinstruction("jump", "end")
-					x += 1
-				else:
-					block.addinstruction("addr","elif")
-					res = i[0].compile(block)
-					block.addinstruction("ifelse",res,"falseCase")
-					i[1].compile(block)
-					block.addinstruction("jump", "end")
-			block.addinstruction("addr","falseCase")
-			self.falseCase.compile(block)
-			block.addinstruction("addr","end")
-			
-			block.addinstruction("addr","falseCase")
-			self.falseCase.compile(block)
-			block.addinstruction("addr", "end")
+			self.falseCase.run(frame, functionFrame)

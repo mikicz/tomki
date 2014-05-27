@@ -38,8 +38,3 @@ class Literal:
 						blah.append(i)
 				return blah
 			return self.value
-
-	def compile(self,block):
-		res = block.tempvariable()
-		block.addinstruction("load",res,self.value)
-		return res
