@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from ReturnThingy import ReturnThingy
 
 class Block:
 	""" Blok prikazu. 

@@ -16,10 +16,14 @@ class VariableWrite:
 
 	def run(self, frame, functionFrame):
 		if (self.index == None):
+			if (self.value.type != "Literal"):
+				self.value = self.value.run(frame,functionFrame)
 			return frame.set(self.variableName, self.value, functionFrame)
 		else:
 			array = frame.get(self.variableName).run(frame, functionFrame)
-			array[self.index.run(frame,functionFrame)] = self.value
+			if self.index.type != "Literal":
+				self.index = self.index.run(frame,functionFrame)
+			array[self.index.run(frame,functionFrame)] = self.value.run(frame,functionFrame)
 			return frame.set(self.variableName,array,functionFrame)
 
 	def compile(self,block):

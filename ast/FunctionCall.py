@@ -34,12 +34,11 @@ class FunctionCall:
             return result
 
     def run (self, frame, functionFrame): # samotné spuštění funkce 
-        
-        (argumentNames, block) = functionFrame.get(self.name.run(frame, functionFrame)) # vytáhnu si z functionFrame jména argumentů a blok, který se má spouštět
+        (argumentNames, block) = functionFrame.get(self.name) # vytáhnu si z functionFrame jména argumentů a blok, který se má spouštět
         newFrame = Frame(frame) # nový Frame, ve kterém se funkce spustí, s odkazem na mateřský frame pro globální proměné
         for i in range(0, len(argumentNames)):
             newFrame.set(argumentNames[i], self.arguments[i].run(frame,functionFrame), functionFrame) # přidám do newFrame všechny proměné se správnými jmény
-
+       
         try:
             block.run(newFrame, functionFrame) # pustí block příkazů přiřazený k funkci
         except Literal, e: # Literal je používán k odchycení returnu

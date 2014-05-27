@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from ReturnThingy import ReturnThingy
 from Literal import Literal
 class Return:
 	def __init__(self, what):
