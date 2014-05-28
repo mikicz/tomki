@@ -20,7 +20,7 @@ def testParser():
 		function quicksort(seznam)
 			{
 				x = len(seznam);
-				if (x == 1)
+				if (x <= 1)
 					{
 						return seznam;
 					}
@@ -46,15 +46,22 @@ def testParser():
 						return vystup;
 					};
 			};
-		a = [7,758,6];
+		a = [7,758,6,87,25465,487,654,87,564,687,65];
 		b = quicksort(a);
 		print b;
 		
 			"""
-	s = """
-		seznam = [1,2];
-		seznam[0] = seznam[1];
-		print seznam; """
+	"""s = 
+		function rekurze(bla) 
+			{
+				if(bla<=0){
+					return(bla);
+				};
+				print bla;
+				bla = bla - 1;
+				return( rekurze(bla) );
+			}; 
+		rekurze(10); """
 #	s = """ 		bla = 5;		function nekdo(){			print("test");		};		nekdo();		print bla;"""
 	l = Lexer() # timhle si zalozite objekt lexilaniho analyzatoru
 	l.analyzeString(s) # timhle mu reknete, aby naparsoval string, ktery jste napsali
