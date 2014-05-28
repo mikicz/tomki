@@ -92,20 +92,10 @@ class Parser:
 		"""
 		
 
-		if (self.top(1)[0] == Lexer.OP_BRACKETS_LEFT):
-			variableName = self.pop(Lexer.IDENT)[1]
-			self.pop(Lexer.OP_BRACKETS_LEFT)
-			index = self.parseExpression()
-			self.pop(Lexer.OP_BRACKETS_RIGHT)
-			self.pop(Lexer.OP_ASSIGN)
-			rhs = self.parseExpression()
-			return VariableWrite(variableName, rhs, index=index)
-
-		else:
-			variableName = self.pop(Lexer.IDENT)[1]
-			self.pop(Lexer.OP_ASSIGN)
-			rhs = self.parseExpression()
-			return VariableWrite(variableName, rhs)
+		variableName = self.pop(Lexer.IDENT)[1]
+		self.pop(Lexer.OP_ASSIGN)
+		rhs = self.parseExpression()
+		return VariableWrite(variableName, rhs)
 
 	def parseExpression(self):
 		""" E0 ::= E1 { OP_OR E1 } """

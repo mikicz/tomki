@@ -10,4 +10,4 @@ class VariableRead:
 		return self.variableName
 
 	def run(self,frame, functionFrame):
-		return frame.get(self.variableName).run(frame, functionFrame, self.index.run(frame, functionFrame))
+		return frame.get(self.variableName).run(frame, functionFrame, self.index)

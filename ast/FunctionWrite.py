@@ -5,7 +5,7 @@ class FunctionWrite:
 	"""
 
 	def __init__(self, name, arrgs, block):
-		self.name = name #AST FunctionIdent
+		self.name = name 
 		self.arrgs = arrgs
 		self.block = block
 		self.type = "FunctionWrite"
